@@ -1,18 +1,20 @@
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
+
 public class Traffic extends JFrame{	
-JLabel label1;		
-public Traffic() {		
-setTitle("Traffic Light System");		
-setSize(300, 200);		
-label1 = new JLabel("Here is some Text");		
-add(label1);		
-setDefaultCloseOperation(EXIT_ON_CLOSE);	
-}		
-public static void main(String[] args) {		
-Traffic ex = new Traffic();		
-ex.setVisible(true);				
-System.out.println("Testing");	
-}
+  JLabel label1;		
+  public Traffic() {		
+    setTitle("Traffic Light System");		
+    setSize(300, 200);		
+    label1 = new JLabel("Here is some Text");		
+    add(label1);		
+    setDefaultCloseOperation(EXIT_ON_CLOSE);	
+  }		
+  
+  public static void main(String[] args) {		
+    Traffic ex = new Traffic();		
+    ex.setVisible(true);				
+    System.out.println("Testing");	
+   }
 }
