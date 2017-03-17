@@ -1,0 +1,10 @@
+
+public class Place
+{
+	public Place()
+	{
+		this.isOccupied = false;
+	}
+	
+	public boolean isOccupied;
+}
