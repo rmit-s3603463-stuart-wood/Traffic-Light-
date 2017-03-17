@@ -1,0 +1,7 @@
+public class Light extends Place
+{
+	public Light()
+	{
+		super();
+	}
+}
