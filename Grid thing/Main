@@ -1,0 +1,141 @@
+import java.util.Scanner;
+import java.util.InputMismatchException;
+
+
+public class Main
+{
+
+	public static void main(String[] args) throws InputMismatchException
+	{	
+		//int columns = (5 * 2) + 10 * (5 - 1) + 10;
+		//int rows = (2 * 2) + 10 * (2 - 1) + 10;
+		
+		Scanner keyboard = new Scanner(System.in);
+		
+		int intersectionColumns = 0;
+		int intersectionRows = 0;
+		int frequency = 0;
+		int greenLightTime = 0;
+		
+		while(!(intersectionColumns >= 1 && intersectionColumns <= 10))
+		{
+			System.out.print("Enter the number of columns of intersections:");
+			try
+			{
+				intersectionColumns = keyboard.nextInt();
+				
+				if(!(intersectionColumns >= 1 && intersectionColumns <= 10))
+				{
+					System.out.println("Please enter an integer from 1 to 10\n");
+				}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Invalid input - enter an integer from 1 to 10\n");
+				keyboard.next();
+			}
+		}
+		
+		while(!(intersectionRows >= 1 && intersectionRows <= 10) | (intersectionColumns * intersectionRows > 10))
+		{
+			System.out.print("\nEnter the number of rows of intersections:");
+			try
+			{
+				intersectionRows = keyboard.nextInt();
+				
+				if(!(intersectionRows >= 1 && intersectionRows <= 10))
+				{
+					System.out.println("Please enter an integer from 1 to 10\n");
+				}
+				else if(intersectionColumns * intersectionRows > 10)
+				{
+					System.out.println("Number of intersections cannot exceed 10,");
+					System.out.println("Enter a smaller number of rows");
+				}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Invalid input - enter an integer from 1 to 10");
+				keyboard.next();
+			}
+		}
+		
+		int columns = (intersectionColumns * 2) + 10 * (intersectionColumns - 1) + 10;
+		int rows = (intersectionRows * 2) + 10 * (intersectionRows - 1) + 10;
+		
+		Place[][] places = new Place[columns][rows];
+		
+		/*Populate Array*/
+		for(int i=0; i<columns; i++)
+		{
+			for(int j=0; j<rows; j++)
+			{
+				places[i][j] = new Place();
+			}
+		}
+		
+		/*Add Roads*/
+		for(int i=0; i<columns; i++)
+		{
+			if((i % 12 == 5)|(i % 12 == 6))
+			{
+				for(int j=0; j<rows; j++)
+				{
+					places[i][j] = new Road();
+				}
+			}
+			else
+			{
+				for(int j=5; j<rows; j++)
+				{
+					places[i][j] = new Road();
+					
+					if(j % 2 == 0)
+					{
+						j+=10;
+					}
+				}
+			}
+		}
+		
+		/*Add Lights*/
+		for(int i=5; i<columns; i++)
+		{
+			for(int j=5; j<rows; j++)
+			{
+				places[i][j] = new Light();
+				
+				if(j % 2 == 0)
+				{
+					j+=10;
+				}
+			}
+			
+			if(i % 2 == 0)
+			{
+				i+=10;
+			}
+		}
+		
+		/*Print road configuration*/
+		for(int j=0; j<rows; j++)
+		{
+			for(int i=0; i<columns; i++)
+			{
+				if(places[i][j] instanceof Road)
+				{
+					System.out.print("R");
+				}
+				else if(places[i][j] instanceof Light)
+				{
+					System.out.print("T");
+				}
+				else
+				{
+					System.out.print(" ");
+				}
+			}
+			System.out.println();
+		}
+	}
+}
