@@ -12,6 +12,9 @@ public class Gui// extends JFrame
 	
 	public Gui(int columns, int rows, Map map)
 	{
+		this.columns = columns;
+		this.rows = rows;
+		
 		f = new JFrame();
 		
 		JButton[][] squares = new JButton[columns][rows];
@@ -49,9 +52,34 @@ public class Gui// extends JFrame
 		
 		f.setLayout(new GridLayout(rows, columns));
 		
+		this.squares = squares;
+		
 		f.setSize(800, 800);
 		f.setVisible(true);
 		f.setResizable(true);
+	}
+	
+	private int rows;
+	private int columns;
+	private JButton[][] squares;
+	
+	public void testTiles()
+	{
+		for(int j=0; j<this.rows; j++)
+		{
+			for(int i=0;i<this.columns; i++)
+			{
+				this.squares[i][j].setBackground(Color.RED);
+				try
+				{
+					Thread.sleep(10);
+				}
+				catch(Exception e)
+				{
+					
+				}
+			}
+		}
 	}
 	
 	/*
