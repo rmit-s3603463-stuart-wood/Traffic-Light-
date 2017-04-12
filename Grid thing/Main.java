@@ -61,7 +61,10 @@ public class Main
 		map.print();
 		
 		Gui test = new Gui(map.getColumns(), map.getRows(), map);
+		//test.testTiles();
 		
 		//test.setVisible(true);
 	}
+	
+	
 }
