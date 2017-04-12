@@ -1,7 +1,11 @@
+import java.util.ArrayList;
+
 public class Map
 {
 	public Map(int intersectionColumns, int intersectionRows)
 	{
+		this.cars = new ArrayList<Car>();
+		
 		columns = calculateDimensions(intersectionColumns);
 		rows = calculateDimensions(intersectionRows);
 		
@@ -52,9 +56,11 @@ public class Map
 	}
 	
 	private Tile[][] grid;
+	private ArrayList<Car> cars;
 	
 	private int columns;
 	private int rows;
+	
 	
 	private int calculateDimensions(int x)
 	{
@@ -68,21 +74,41 @@ public class Map
 	public void print()
 	{
 		/*Print road configuration*/
+		System.out.print("|  |");
+		for(int i=0; i<columns; i++)
+		{
+			if(i<10)
+			{
+				System.out.print(" ");
+			}
+			System.out.print(i + "|");
+		}
+		System.out.println();
+		
 		for(int j=0; j<rows; j++)
 		{
+			if(j<10)
+			{
+				System.out.print("| " + j + "|");
+			}
+			else
+			{
+				System.out.print("|" + j + "|");
+			}
+			
 			for(int i=0; i<columns; i++)
 			{
 				if(this.grid[i][j] instanceof Road)
 				{
-					System.out.print("R");
+					System.out.print("Rd|");
 				}
 				else if(this.grid[i][j] instanceof Light)
 				{
-					System.out.print("T");
+					System.out.print("Li|");
 				}
 				else
 				{
-					System.out.print(" ");
+					System.out.print("  |");
 				}
 			}
 			System.out.println();
@@ -110,5 +136,17 @@ public class Map
 			return 'l';
 		}
 		else return 'b';
+	}
+	
+	public void addCar(int x, int y, byte direction, byte colour)
+	{
+		this.cars.add(new Car(x, y, direction, colour));
+	}
+	
+	public void deleteCar(Car c)
+	{
+		int temp = this.cars.indexOf(c);
+		this.cars.remove(temp);
+		this.cars.trimToSize();
 	}
 }
