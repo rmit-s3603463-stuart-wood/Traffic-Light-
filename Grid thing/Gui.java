@@ -18,36 +18,16 @@ public class Gui// extends JFrame
 		f = new JFrame();
 		
 		JButton[][] squares = new JButton[columns][rows];
-		//cycle through columns in ascending order
 		for(int i=0; i<columns; i++)
 		{
-			/*cycle through rows in ascending order
-			 for each cell, check the type in the map
-			 and colour accordingly
-			*/
 			for(int j=0; j<rows; j++)
 			{
 				char c = map.getTileType(i, j);
 				
-				if(c == 'b')
-				{
-					squares[i][j] = new JButton("");
-					squares[i][j].setBackground(Color.GREEN);
-				}
-				else if(c == 'r')
-				{
-					squares[i][j] = new JButton("");
-					squares[i][j].setBackground(Color.GRAY);
-				}
-				else
-				{
-					squares[i][j] = new JButton("T");
-					squares[i][j].setBackground(Color.YELLOW);
-				}
+				drawBackground(squares, c, i, j);
+				
 			}
 		}
-		
-		//display all
 		
 		for(int j=0; j<rows; j++)
 		{
@@ -64,6 +44,7 @@ public class Gui// extends JFrame
 		f.setSize(800, 800);
 		f.setVisible(true);
 		f.setResizable(true);
+		f.setDefaultCloseOperation(f.EXIT_ON_CLOSE);
 	}
 	
 	private int rows;
@@ -88,6 +69,49 @@ public class Gui// extends JFrame
 			}
 		}
 	}
+	
+	/*make background at squares[i][j] match type of that of map.grid[i][j]*/
+	public void drawBackground(JButton[][] squares, char c, int i, int j)
+	{
+		if(c == 'b')
+		{
+			squares[i][j] = new JButton("");
+			squares[i][j].setBackground(Color.GREEN);
+		}
+		else if(c == 'r')
+		{
+			squares[i][j] = new JButton("");
+			squares[i][j].setBackground(Color.GRAY);
+		}
+		else
+		{
+			squares[i][j] = new JButton("T");
+			squares[i][j].setBackground(Color.YELLOW);
+		}
+	}
+	
+	/*
+	public void update(int x, int y, byte direction, byte colour, Map map)
+	{
+		int temp = (int) direction;
+		char previousTile;
+		switch(temp)
+		{
+			case 0:
+				
+				//if the previous tile was a traffic light, change the icon to the icon for the traffic light
+				//otherwise change the icon to null and it will revert to the background
+				
+				previousTile = map.getTileType(x+1, y);
+				drawBackground(this.squares, previousTile, x+1, y); //revert image to background at previous tile
+				Icon iconCar = new ImageIcon("resources/car.png");
+				squares[i][j] = new JButton("", iconCar);
+				
+				
+		}
+	}
+	*/
+	
 	
 	/*
 	public Gui()
