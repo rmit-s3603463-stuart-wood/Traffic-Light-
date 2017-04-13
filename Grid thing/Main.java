@@ -14,6 +14,7 @@ public class Main
 		int frequency = 0;
 		int greenLightTime = 0;
 		
+		//Get the number of vertical roads from the user (between 1 and 10)
 		while(!(intersectionColumns >= 1 && intersectionColumns <= 10))
 		{
 			System.out.print("Enter the number of columns of intersections:");
@@ -33,6 +34,7 @@ public class Main
 			}
 		}
 		
+		//Get the number of horizontal roads from the user (between 1 and 10)
 		while(!(intersectionRows >= 1 && intersectionRows <= 10) | (intersectionColumns * intersectionRows > 10))
 		{
 			System.out.print("\nEnter the number of rows of intersections:");
@@ -57,9 +59,11 @@ public class Main
 			}
 		}
 		
+		//build the map
 		Map map = new Map(intersectionColumns, intersectionRows);
 		map.print();
 		
+		//display the GUI
 		Gui test = new Gui(map.getColumns(), map.getRows(), map);
 		//test.testTiles();
 		
