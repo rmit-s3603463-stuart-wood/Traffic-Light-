@@ -141,10 +141,12 @@ public class Map
 	public void addCar(int x, int y, byte direction, byte colour)
 	{
 		this.cars.add(new Car(x, y, direction, colour));
+		this.grid[x][y].setIsOccupied(true);
 	}
 	
 	public void deleteCar(Car c)
 	{
+		grid[c.getX()][c.getY()].setIsOccupied(false);
 		int temp = this.cars.indexOf(c);
 		this.cars.remove(temp);
 		this.cars.trimToSize();
