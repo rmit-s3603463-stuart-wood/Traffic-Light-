@@ -18,8 +18,13 @@ public class Gui// extends JFrame
 		f = new JFrame();
 		
 		JButton[][] squares = new JButton[columns][rows];
+		//cycle through columns in ascending order
 		for(int i=0; i<columns; i++)
 		{
+			/*cycle through rows in ascending order
+			 for each cell, check the type in the map
+			 and colour accordingly
+			*/
 			for(int j=0; j<rows; j++)
 			{
 				char c = map.getTileType(i, j);
@@ -41,6 +46,8 @@ public class Gui// extends JFrame
 				}
 			}
 		}
+		
+		//display all
 		
 		for(int j=0; j<rows; j++)
 		{
