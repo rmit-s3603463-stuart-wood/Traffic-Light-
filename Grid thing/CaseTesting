@@ -58,8 +58,15 @@ public class CaseTesting {
 		
 	}
 //	6. Verify that no car moves over another car
-	@Test
-	public void singleCar(){
+	@Test (expected = NullPointerException.class)
+	public void singleCar() {
+		Map map = new Map(1,1);
+		/* Create two cars on top of one another: as grid[x][y].isOccupied == true, 
+		 * the second car object cannot be created there, leading to a NullPointerException*/
+		map.addCar(1, 1, (byte) 0, (byte) 0);
+		map.addCar(1, 1, (byte) 0, (byte) 0);
+	}
+	
 		
 	}
 //	7. Verify the number of cars entering at the beginning of the road is the same as the number of cars exiting at the road.
