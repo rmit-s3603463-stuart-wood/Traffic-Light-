@@ -1,5 +1,6 @@
 public class Car
 {
+	
 	public Car(int x, int y, byte direction, byte colour)
 	{
 		this.x = x;
@@ -7,9 +8,10 @@ public class Car
 		this.direction = direction;
 		this.colour = colour;
 	}
-	
+	//x and y are the current coordinates of the car on the map
 	private int x;
 	private int y;
+	//the direction the car is heading
 	private byte direction;
 	/* 0 - north
 	   1 - east
@@ -43,10 +45,16 @@ public class Car
 		return this.colour;
 	}
 	
+	//canMove called from Tile.isOccupied() and Light.canMove()
 	public void move(boolean canMove, Tile[][] grid)
 	{
 		if(canMove)
 		{
+			/*
+			for each direction, if possible to move,
+			move the car, set the new grid coordinates 
+			to "isOccupied = true" and set the old to "isOccupied = false" 
+			*/
 			switch (this.direction)
 			{
 				case 0: this.y--;
