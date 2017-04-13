@@ -1,0 +1,70 @@
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class CaseTesting {
+
+//	1. Verify the light changes from red to amber to green and from green to amber to red
+	@Test
+	public void lightChange(){
+		Light light = new Light(1,2);
+		byte Hphase = light.getHorizontalPhase();
+		byte Vphase = light.getVerticalPhase();
+		
+		Light tempLight = new Light(0,0);
+		tempLight.setPhase(Hphase, Vphase);
+		
+		boolean pass = false;
+		
+		if(Hphase == tempLight.getHorizontalPhase() && Vphase == tempLight.getVerticalPhase()){
+			System.out.println("Test case 1: Lights did not change");
+		}
+		else{
+			pass = true;
+		}
+		
+		assertTrue(pass == true);
+	}
+//	2. Verify the traffic light for cars coming in the opposite direction in any junction is the same
+	@Test
+	public void sameLightPerLine(){
+	}
+//	3. Verify the traffic lights along crisscrossing roads in the same junction are either green and red or amber and red.
+	@Test 
+	public void differentLightsIntersection(){
+		Light light = new Light(1,1);
+		byte Hphase = light.getHorizontalPhase();
+		byte Vphase = light.getVerticalPhase();
+		
+		boolean redSame = false;
+		
+		if(Hphase == 0 && Vphase == 0){
+			redSame = true;
+		}
+		else{
+			System.out.println("Test case 3: One Light must be red");
+		}
+		
+		assertTrue(redSame == true || Hphase != Vphase);
+	}
+//	4. Verify that no car moves through a red light.
+	@Test
+	public void redLightRule(){
+		
+	}
+//	5. Verify that the first car waiting at the junction starts moving into the junction only when the light turns green and junction is free of traffic.
+	@Test
+	public void greenLightRule(){
+		
+	}
+//	6. Verify that no car moves over another car
+	@Test
+	public void singleCar(){
+		
+	}
+//	7. Verify the number of cars entering at the beginning of the road is the same as the number of cars exiting at the road.
+	@Test
+	public void carOut(){			
+			
+	}
+}
