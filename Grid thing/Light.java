@@ -11,8 +11,12 @@ public class Light extends Tile
 	private byte verticalPhase;
 	/* 0 - Red
 	   1 - Amber
-	   2 - Green */
+	   2 - Green
+	   Vertical phase is north-to-south light colour
+	   horizontal phase is east-to-west light colour */
 	
+	/* Check traffic light in each direction and whether the tile is occupied. 
+	   Return true if a car can move here */
 	public boolean canMove(byte direction)
 	{
 		if(this.getIsOccupied())
