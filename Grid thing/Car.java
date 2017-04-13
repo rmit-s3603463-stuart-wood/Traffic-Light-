@@ -1,80 +1,70 @@
-public class Car
+import java.util.Scanner;
+import java.util.InputMismatchException;
+
+
+public class Main
 {
-	
-	public Car(int x, int y, byte direction, byte colour)
-	{
-		this.x = x;
-		this.y = y;
-		this.direction = direction;
-		this.colour = colour;
-	}
-	//x and y are the current coordinates of the car on the map
-	private int x;
-	private int y;
-	//the direction the car is heading
-	private byte direction;
-	/* 0 - north
-	   1 - east
-	   2 - south
-	   3 - west */
-	private byte colour;
-	/* 0 - red
-	   1 - blue
-	   2 - green
-	   3 - yellow
-	   4 - pink
-	   5 - purple */
-	
-	public int getX()
-	{
-		return this.x;
-	}
-	
-	public int getY()
-	{
-		return this.y;
-	}
-	
-	public byte getDirection()
-	{
-		return this.direction;
-	}
-	
-	public byte getColour()
-	{
-		return this.colour;
-	}
-	
-	//canMove called from Tile.isOccupied() and Light.canMove()
-	public void move(boolean canMove, Tile[][] grid)
-	{
-		if(canMove)
+
+	public static void main(String[] args) throws InputMismatchException
+	{	
+		Scanner keyboard = new Scanner(System.in);
+		
+		int intersectionColumns = 0;
+		int intersectionRows = 0;
+		int frequency = 0;
+		int greenLightTime = 0;
+		
+		while(!(intersectionColumns >= 1 && intersectionColumns <= 10))
 		{
-			/*
-			for each direction, if possible to move,
-			move the car, set the new grid coordinates 
-			to "isOccupied = true" and set the old to "isOccupied = false" 
-			*/
-			switch (this.direction)
+			System.out.print("Enter the number of columns of intersections:");
+			try
 			{
-				case 0: this.y--;
-						grid[this.x][this.y].setIsOccupied(true);
-						grid[this.x][this.y + 1].setIsOccupied(false);
-						break;
-				case 1: this.x++;
-						grid[this.x][this.y].setIsOccupied(true);
-						grid[this.x - 1][this.y].setIsOccupied(false);
-						break;
-				case 2: this.y++;
-						grid[this.x][this.y].setIsOccupied(true);
-						grid[this.x][this.y - 1].setIsOccupied(false);
-						break;
-				case 3: this.x--;
-						grid[this.x][this.y].setIsOccupied(true);
-						grid[this.x + 1][this.y].setIsOccupied(false);
-						break;
-				default: break;
+				intersectionColumns = keyboard.nextInt();
+				
+				if(!(intersectionColumns >= 1 && intersectionColumns <= 10))
+				{
+					System.out.println("Please enter an integer from 1 to 10\n");
+				}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Invalid input - enter an integer from 1 to 10\n");
+				keyboard.next();
 			}
 		}
+		
+		while(!(intersectionRows >= 1 && intersectionRows <= 10) | (intersectionColumns * intersectionRows > 10))
+		{
+			System.out.print("\nEnter the number of rows of intersections:");
+			try
+			{
+				intersectionRows = keyboard.nextInt();
+				
+				if(!(intersectionRows >= 1 && intersectionRows <= 10))
+				{
+					System.out.println("Please enter an integer from 1 to 10\n");
+				}
+				else if(intersectionColumns * intersectionRows > 10)
+				{
+					System.out.println("Number of intersections cannot exceed 10,");
+					System.out.println("Enter a smaller number of rows");
+				}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Invalid input - enter an integer from 1 to 10");
+				keyboard.next();
+			}
+		}
+		
+		Map map = new Map(intersectionColumns, intersectionRows);
+		map.print();
+		
+		Gui test = new Gui(map.getColumns(), map.getRows(), map);
+		//test.testTiles();
+		
+		//test.setVisible(true);
 	}
+	
+	
 }
