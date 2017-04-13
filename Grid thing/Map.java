@@ -64,8 +64,8 @@ public class Map
 	
 	private int calculateDimensions(int x)
 	{
-		/*For each x, where x is the number of roads, north to south or east to west,
-		  the length of the road perpendicular is 5 on each side of the road (+10), + 10 between
+		/*For each x, where x is the number of roads, vertical or horizontal,
+		  the length of the road perpendicular is 5 units on each side of the road (+10), + 10 between
 		  each intersection (10*(x-1)), while each intersection takes up 2 units (x*2)
 		*/
 		return (x * 2) + 10 * (x - 1) + 10;
