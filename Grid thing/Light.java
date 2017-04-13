@@ -50,4 +50,16 @@ public class Light extends Tile
 		this.horizontalPhase = horizontalPhase;
 		this.verticalPhase = verticalPhase;
 	}
+	
+	
+	
+	public byte getHorizontalPhase()
+	{
+		return this.horizontalPhase;
+	}
+	
+	public byte getVerticalPhase()
+	{
+		return this.verticalPhase;
+	}
 }
