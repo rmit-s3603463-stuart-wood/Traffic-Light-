@@ -1,5 +1,6 @@
 import java.util.Scanner;
 import java.util.InputMismatchException;
+import java.util.Random;
 
 
 public class Main
@@ -14,7 +15,6 @@ public class Main
 		int frequency = 0;
 		int greenLightTime = 0;
 		
-		//Get the number of vertical roads from the user (between 1 and 10)
 		while(!(intersectionColumns >= 1 && intersectionColumns <= 10))
 		{
 			System.out.print("Enter the number of columns of intersections:");
@@ -34,7 +34,6 @@ public class Main
 			}
 		}
 		
-		//Get the number of horizontal roads from the user (between 1 and 10)
 		while(!(intersectionRows >= 1 && intersectionRows <= 10) | (intersectionColumns * intersectionRows > 10))
 		{
 			System.out.print("\nEnter the number of rows of intersections:");
@@ -59,16 +58,235 @@ public class Main
 			}
 		}
 		
-		//build the map
+		while(greenLightTime < 1)
+		{
+			System.out.print("\nEnter the duration for green lights:");
+			try
+			{
+				greenLightTime = keyboard.nextInt();
+				
+				if(greenLightTime < 1)
+				{
+					System.out.println("Duration must be 1 second or greater");
+				}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Invalid input - enter an integer greater than 0");
+				keyboard.next();
+			}
+		}
+		
 		Map map = new Map(intersectionColumns, intersectionRows);
 		map.print();
 		
-		//display the GUI
 		Gui test = new Gui(map.getColumns(), map.getRows(), map);
+		
 		//test.testTiles();
 		
-		//test.setVisible(true);
+		lightCycle(greenLightTime, map, test);
+		
 	}
 	
-	
+	/*
+	public static void carSpawn(Map map, Gui gui)
+	{
+		int entrances = (map.getIntersectionColumns() + map.getIntersectionRows()) * 2;
+		Random rng = new Random();
+		int columns = map.getColumns();
+		int rows = map.getRows();
+		int a;
+		int b;
+		
+		while(true)
+		{
+			try
+			{
+				a = rng.nextInt(entrances);
+				b = -1;
+				
+				while(b!=a)
+				{
+					//left
+					for(int i=0; i<1; i++)
+					{
+						for(int j=5; j>=rows; j+=12)
+						{
+							b++;
+							if(a==b)
+							{
+								if(map.getGrid()[i][j].getIsOccupied() == false)
+								{
+									map.addCar(i, j, (byte) 1, (byte) 0);
+									//draw car
+									break;
+								}
+								//spawn car here heading east
+								//break
+							}
+						}
+					}
+					
+					
+				}
+				
+				
+			}
+			catch(Exception e)
+			{
+				System.out.println("Car Spawn Error");
+			}
+		}
+		
+	}
+	*/
+
+	public static void lightCycle(int greenLightTime, Map map, Gui test)
+	{
+		int rows = map.getRows();
+		int columns = map.getColumns();
+		
+		while(true)
+		{
+			//green, red
+			for(int i=0; i<columns; i++)
+			{
+				for(int j=0; j<rows; j++)
+				{
+					if (map.getGrid()[i][j] instanceof Light)
+					{
+						System.out.println("GREEN-RED " + i +", " + j);
+						
+						Light light = (Light) map.getGrid()[i][j];
+						light.setPhase((byte) 2,(byte) 0);
+						test.update(i, j, light);
+					}
+				}
+			}
+			try
+			{
+				Thread.sleep(greenLightTime * 1000);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Exception");
+			}
+			//amber, red
+			for(int i=0; i<columns; i++)
+			{
+				for(int j=0; j<rows; j++)
+				{
+					if (map.getGrid()[i][j] instanceof Light)
+					{
+						System.out.println("AMBER-RED " + i +", " + j);
+						
+						Light light = (Light) map.getGrid()[i][j];
+						light.setPhase((byte) 1,(byte) 0);
+						test.update(i, j, light);
+					}
+				}
+			}
+			try
+			{
+				Thread.sleep(5000);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Exception");
+			}
+			//red, red
+			for(int i=0; i<columns; i++)
+			{
+				for(int j=0; j<rows; j++)
+				{
+					if (map.getGrid()[i][j] instanceof Light)
+					{
+						System.out.println("RED-RED " + i +", " + j);
+						
+						Light light = (Light) map.getGrid()[i][j];
+						light.setPhase((byte) 0,(byte) 0);
+						test.update(i, j, light);
+					}
+				}
+			}
+			try
+			{
+				Thread.sleep(5000);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Exception");
+			}
+			//red, green
+			for(int i=0; i<columns; i++)
+			{
+				for(int j=0; j<rows; j++)
+				{
+					if (map.getGrid()[i][j] instanceof Light)
+					{
+						System.out.println("RED-GREEN " + i +", " + j);
+						
+						Light light = (Light) map.getGrid()[i][j];
+						light.setPhase((byte) 0,(byte) 2);
+						test.update(i, j, light);
+					}
+				}
+			}
+			try
+			{
+				Thread.sleep(greenLightTime * 1000);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Exception");
+			}
+			//red, amber
+			for(int i=0; i<columns; i++)
+			{
+				for(int j=0; j<rows; j++)
+				{
+					if (map.getGrid()[i][j] instanceof Light)
+					{
+						System.out.println("RED-AMBER " + i +", " + j);
+						
+						Light light = (Light) map.getGrid()[i][j];
+						light.setPhase((byte) 0,(byte) 1);
+						test.update(i, j, light);
+					}
+				}
+			}
+			try
+			{
+				Thread.sleep(5000);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Exception");
+			}
+			//red, red
+			for(int i=0; i<columns; i++)
+			{
+				for(int j=0; j<rows; j++)
+				{
+					if (map.getGrid()[i][j] instanceof Light)
+					{
+						System.out.println("RED-RED " + i +", " + j);
+						
+						Light light = (Light) map.getGrid()[i][j];
+						light.setPhase((byte) 0,(byte) 0);
+						test.update(i, j, light);
+					}
+				}
+			}
+			try
+			{
+				Thread.sleep(5000);
+			}
+			catch(Exception e)
+			{
+				System.out.println("Exception");
+			}
+			
+		}
+	}
 }
