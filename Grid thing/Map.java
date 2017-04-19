@@ -6,6 +6,9 @@ public class Map
 	{
 		this.cars = new ArrayList<Car>();
 		
+		this.intersectionColumns = intersectionColumns;
+		this.intersectionRows = intersectionRows;
+		
 		columns = calculateDimensions(intersectionColumns);
 		rows = calculateDimensions(intersectionRows);
 		
@@ -61,11 +64,14 @@ public class Map
 	private int columns;
 	private int rows;
 	
+	private int intersectionColumns;
+	private int intersectionRows;
+	
 	
 	private int calculateDimensions(int x)
 	{
-		/*For each x, where x is the number of roads, vertical or horizontal,
-		  the length of the road perpendicular is 5 units on each side of the road (+10), + 10 between
+		/*For each x, where x is the number of roads, north to south or east to west,
+		  the length of the road perpendicular is 5 on each side of the road (+10), + 10 between
 		  each intersection (10*(x-1)), while each intersection takes up 2 units (x*2)
 		*/
 		return (x * 2) + 10 * (x - 1) + 10;
@@ -125,6 +131,16 @@ public class Map
 		return this.rows;
 	}
 	
+	public int getIntersectionColumns()
+	{
+		return this.intersectionColumns;
+	}
+	
+	public int getIntersectionRows()
+	{
+		return this.intersectionRows;
+	}
+	
 	public char getTileType(int x, int y)
 	{
 		if(this.grid[x][y] instanceof Road)
@@ -138,15 +154,28 @@ public class Map
 		else return 'b';
 	}
 	
+	public Tile[][] getGrid()
+	{
+		return this.grid;
+	}
+	
+	public Tile getTile(int x, int y)
+	{	
+		return this.grid[x][y];
+	}
+	
+	public ArrayList<Car> getCars()
+	{
+		return this.cars;
+	}
+	
 	public void addCar(int x, int y, byte direction, byte colour)
 	{
 		this.cars.add(new Car(x, y, direction, colour));
-		this.grid[x][y].setIsOccupied(true);
 	}
 	
 	public void deleteCar(Car c)
 	{
-		grid[c.getX()][c.getY()].setIsOccupied(false);
 		int temp = this.cars.indexOf(c);
 		this.cars.remove(temp);
 		this.cars.trimToSize();
