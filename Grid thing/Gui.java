@@ -8,14 +8,14 @@ import java.awt.*;
 
 public class Gui// extends JFrame
 {
-	JFrame f;
+	//JFrame f;
 	
 	public Gui(int columns, int rows, Map map)
 	{
 		this.columns = columns;
 		this.rows = rows;
 		
-		f = new JFrame();
+		this.f = new JFrame();
 		
 		JButton[][] squares = new JButton[columns][rows];
 		for(int i=0; i<columns; i++)
@@ -24,7 +24,7 @@ public class Gui// extends JFrame
 			{
 				char c = map.getTileType(i, j);
 				
-				drawBackground(squares, c, i, j);
+				drawBackground(squares, c, i, j, map);
 				
 			}
 		}
@@ -33,20 +33,24 @@ public class Gui// extends JFrame
 		{
 			for(int i=0; i<columns; i++)
 			{
-				f.add(squares[i][j]);
+				this.f.add(squares[i][j]);
 			}
 		}
 		
-		f.setLayout(new GridLayout(rows, columns));
+		this.f.setLayout(new GridLayout(rows, columns));
 		
 		this.squares = squares;
 		
-		f.setSize(800, 800);
-		f.setVisible(true);
-		f.setResizable(true);
-		f.setDefaultCloseOperation(f.EXIT_ON_CLOSE);
+		this.f.setSize(800, 800);
+		this.f.setVisible(true);
+		this.f.setResizable(true);
+		this.f.setDefaultCloseOperation(f.EXIT_ON_CLOSE);
+		
+		//this.frame = f;
 	}
 	
+	//private JFrame frame;
+	private JFrame f;
 	private int rows;
 	private int columns;
 	private JButton[][] squares;
@@ -70,48 +74,186 @@ public class Gui// extends JFrame
 		}
 	}
 	
-	/*make background at squares[i][j] match type of that of map.grid[i][j]*/
-	public void drawBackground(JButton[][] squares, char c, int i, int j)
+	/*make background at squares[i][j] match type of that of map.grid[i][j]
+	 * shows initial traffic light images*/
+	public void drawBackground(JButton[][] squares, char c, int i, int j, Map map)
 	{
 		if(c == 'b')
-		{
+		{	
 			squares[i][j] = new JButton("");
 			squares[i][j].setBackground(Color.GREEN);
+			
 		}
 		else if(c == 'r')
 		{
 			squares[i][j] = new JButton("");
-			squares[i][j].setBackground(Color.GRAY);
+			squares[i][j].setBackground(new Color(102, 102, 102));
 		}
 		else
 		{
-			squares[i][j] = new JButton("T");
-			squares[i][j].setBackground(Color.YELLOW);
+			squares[i][j] = new JButton("", getLightImage(i, j, map));
 		}
 	}
 	
 	/*
-	public void update(int x, int y, byte direction, byte colour, Map map)
+	public void test2()
 	{
-		int temp = (int) direction;
-		char previousTile;
-		switch(temp)
-		{
-			case 0:
-				
-				//if the previous tile was a traffic light, change the icon to the icon for the traffic light
-				//otherwise change the icon to null and it will revert to the background
-				
-				previousTile = map.getTileType(x+1, y);
-				drawBackground(this.squares, previousTile, x+1, y); //revert image to background at previous tile
-				Icon iconCar = new ImageIcon("resources/car.png");
-				squares[i][j] = new JButton("", iconCar);
-				
-				
-		}
+		Icon ic = new ImageIcon("resources/lights/20.png");
+		this.squares[5][5].setIcon(ic);
+		//this.f.setVisible(false);
+		//this.f.setVisible(true);
+		System.out.println("BLAH!");
+		
+		// crap
+		//JButton lel = new JButton("toplel");
+		//this.f.add(lel);
+		//JButton top = new JButton("top");
+		//this.f.add(top);
+		//this.f.setVisible(false);
+		//this.f.setVisible(true);
+		
 	}
 	*/
 	
+	//public void update(int x, int y, byte direction, byte colour, Map map)
+	public void update(Car car, Map map)
+	{
+		int x = car.getX();
+		int y = car.getY();
+		int temp = (int) car.getDirection();
+		byte colour = car.getColour();
+		
+		char previousTile;
+		
+		/*At the previous tile:
+		 *if it is a light, change image to that of the light
+		 *otherwise, just remove the car image
+		 */
+		switch(temp)
+		{
+			case 0:
+				previousTile = map.getTileType(x, y+1);
+				if(previousTile == 'l')
+				{
+					this.squares[x][y+1] = new JButton("", getLightImage(x, y+1, map));
+				}
+				else
+				{
+					this.squares[x][y+1] = new JButton("");
+				}
+				break;
+			case 1:
+				previousTile = map.getTileType(x-1, y);
+				if(previousTile == 'l')
+				{
+					this.squares[x-1][y] = new JButton("", getLightImage(x+1, y, map));
+				}
+				else
+				{
+					this.squares[x][y+1] = new JButton("");
+				}
+				break;
+			case 2:
+				previousTile = map.getTileType(x, y-1);
+				if(previousTile == 'l')
+				{
+					this.squares[x][y-1] = new JButton("", getLightImage(x, y-1, map));
+				}
+				else
+				{
+					this.squares[x][y+1] = new JButton("");
+				}
+				break;
+			case 3:
+				previousTile = map.getTileType(x+1, y);
+				if(previousTile == 'l')
+				{
+					this.squares[x+1][y] = new JButton("", getLightImage(x+1, y, map));
+				}
+				else
+				{
+					this.squares[x+1][y] = new JButton("");
+				}
+				break;
+			default:
+				break;	
+		}
+		
+		Icon iconCar = new ImageIcon("resources/car.png");
+		this.squares[x][y] = new JButton("", iconCar);
+	}
+	
+	public void update(int x, int y, Light light)
+	{
+		byte horizontalPhase = light.getHorizontalPhase();
+		byte verticalPhase = light.getVerticalPhase();
+		String lightCombination = (horizontalPhase + "" + verticalPhase);
+		getLightImage(lightCombination);
+		
+		Icon ic = getLightImage(lightCombination);
+		this.squares[x][y].setIcon(ic);
+		//this.squares[x][y] = null;
+		//this.squares[x][y] = new JButton("", getLightImage(lightCombination));
+	}
+	
+	public Icon getLightImage(String lightCombination)
+	{
+		Icon img = null;
+		if (lightCombination.equals("00"))
+		{
+			img = new ImageIcon("resources/lights/00.png");
+		}
+		else if(lightCombination.equals("01"))
+		{
+			img = new ImageIcon("resources/lights/01.png");
+		}
+		else if(lightCombination.equals("02"))
+		{
+			img = new ImageIcon("resources/lights/02.png");
+		}
+		else if(lightCombination.equals("10"))
+		{
+			img = new ImageIcon("resources/lights/10.png");
+		}
+		else if(lightCombination.equals("20"))
+		{
+			img = new ImageIcon("resources/lights/20.png");
+		}
+		
+		return img;
+	}
+	
+	public Icon getLightImage(int x, int y, Map map)
+	{	
+		Light light = (Light) map.getTile(x, y);
+		byte horizontalPhase = light.getHorizontalPhase();
+		byte verticalPhase = light.getVerticalPhase();
+		String temp = (horizontalPhase + "" + verticalPhase);
+		
+		Icon img = null;
+		if(temp.equals("00"))
+		{
+			img = new ImageIcon("resources/lights/00.png");
+		}
+		else if(temp.equals("01"))
+		{
+			img = new ImageIcon("resources/lights/01.png");
+		}
+		else if(temp.equals("02"))
+		{
+			img = new ImageIcon("resources/lights/02.png");
+		}
+		else if(temp.equals("10"))
+		{
+			img = new ImageIcon("resources/lights/10.png");
+		}
+		else if(temp.equals("20"))
+		{
+			img = new ImageIcon("resources/lights/20.png");
+		}
+		
+		return img;
+	}
 	
 	/*
 	public Gui()
