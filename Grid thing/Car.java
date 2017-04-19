@@ -43,9 +43,8 @@ public class Car
 		return this.colour;
 	}
 	
-	public void move(Tile[][] grid)
+	public void move(Tile[][] grid, Map map, Gui gui)
 	{
-		
 		switch (this.direction)
 		{
 			case 0: this.y--;
@@ -66,5 +65,7 @@ public class Car
 					break;
 			default: break;
 		}
+		
+		gui.update(this, map);
 	}
 }
