@@ -44,7 +44,7 @@ public class Gui// extends JFrame
 		this.f.setSize(800, 800);
 		this.f.setVisible(true);
 		this.f.setResizable(true);
-		this.f.setDefaultCloseOperation(f.EXIT_ON_CLOSE);
+		this.f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		//this.frame = f;
 	}
