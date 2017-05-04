@@ -43,27 +43,31 @@ public class Car
 		return this.colour;
 	}
 	
-	public void move(Tile[][] grid, Map map, Gui gui)
+	public void move(Tile[][] grid, Map map, Gui gui) throws NullPointerException
 	{
 		switch (this.direction)
 		{
 			case 0: this.y--;
-					grid[this.x][this.y].setIsOccupied(true);
 					grid[this.x][this.y + 1].setIsOccupied(false);
 					break;
 			case 1: this.x++;
-					grid[this.x][this.y].setIsOccupied(true);
 					grid[this.x - 1][this.y].setIsOccupied(false);
 					break;
 			case 2: this.y++;
-					grid[this.x][this.y].setIsOccupied(true);
 					grid[this.x][this.y - 1].setIsOccupied(false);
 					break;
 			case 3: this.x--;
-					grid[this.x][this.y].setIsOccupied(true);
 					grid[this.x + 1][this.y].setIsOccupied(false);
 					break;
 			default: break;
+		}
+		try 
+		{
+			grid[this.x][this.y].setIsOccupied(true);
+		}
+		catch (NullPointerException e)
+		{
+			System.out.println("Car has left road.\n");
 		}
 		
 		gui.update(this, map);
