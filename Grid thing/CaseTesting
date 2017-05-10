@@ -3,6 +3,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class CaseTesting {
+	@Before
 
 //	1. Verify the light changes from red to amber to green and from green to amber to red
 	@Test
