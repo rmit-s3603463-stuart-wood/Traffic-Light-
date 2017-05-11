@@ -250,4 +250,55 @@ public class Map
 			}
 		}
 	}
+	
+	public static void carSpawn(Map map, Gui gui)
+	{
+		int entrances = (map.getIntersectionColumns() + map.getIntersectionRows()) * 2 - 1; //-1 added as random.nextInt() has an inclusive range (adds 1)
+		Random rng = new Random();
+		int columns = map.getColumns();
+		int rows = map.getRows();
+		int a;
+		int b;
+		
+		while(true)
+		{
+			try
+			{
+				a = rng.nextInt(entrances);
+				b = -1;
+				
+				while(b!=a)
+				{
+					//left
+					for(int i=0; i<1; i++)
+					{
+						for(int j=5; j>=rows; j+=12)
+						{
+							b++;
+							if(a==b)
+							{
+								if(map.getGrid()[i][j].getIsOccupied() == false)
+								{
+									map.addCar(i, j, (byte) 1, (byte) 0);
+									//draw car
+									break;
+								}
+								//spawn car here heading east
+								//break
+							}
+						}
+					}
+					
+					
+				}
+				
+				
+			}
+			catch(Exception e)
+			{
+				System.out.println("Car Spawn Error");
+			}
+		}
+		
+	}
 }
