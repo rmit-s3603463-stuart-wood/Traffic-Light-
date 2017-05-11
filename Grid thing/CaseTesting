@@ -3,51 +3,48 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 public class CaseTesting {
+public Map map;
+	Gui test;
 	@Before
-
-//	1. Verify the light changes from red to amber to green and from green to amber to red
-	@Test
-	public void lightChange(){
-		Light light = new Light(1,2);
-		byte Hphase = light.getHorizontalPhase();
-		byte Vphase = light.getVerticalPhase();
-		
-		Light tempLight = new Light(0,0);
-		tempLight.setPhase(Hphase, Vphase);
-		
-		boolean pass = false;
-		
-		if(Hphase == tempLight.getHorizontalPhase() && Vphase == tempLight.getVerticalPhase()){
-			System.out.println("Test case 1: Lights did not change");
-		}
-		else{
-			pass = true;
-		}
-		
-		assertTrue(pass == true);
+	public void BeforeClass(){
+		map = new Map(2,2); //builds all road and light instances
+		test = new Gui(map.getColumns(), map.getRows(), map);
 	}
+	
+	@Test //light at same location changes
+	public void lightChange() {
+		map.forceLightRed();
+		Light light = (Light) map.getTile(5, 5);
+		Light oldLight = new Light(0,0);
+		oldLight.setPhase(light.getHorizontalPhase(), light.getVerticalPhase());
+		map.lightSwitch(true);
+		
+		boolean changed = true;
+		if(oldLight.getHorizontalPhase() == light.getHorizontalPhase() || oldLight.getVerticalPhase() == light.getVerticalPhase()){
+			changed = false;
+		}
+		
+		assertFalse(changed);
+	}
+	
+	@Test
+	public void sameLights(){
+		Light light1 = (Light) map.getTile(5, 5);
+		Light light2 = (Light) map.getTile(5, 17);
+		map.lightSwitch(true);
+		
+		boolean sameLight = false;
+		if(light1.getHorizontalPhase() == light2.getHorizontalPhase() && light1.getVerticalPhase() == light2.getVerticalPhase()){
+			sameLight = true;
+		}
+		assertTrue(sameLight);
+	}
+	
 //	2. Verify the traffic light for cars coming in the opposite direction in any junction is the same
 	@Test
 	public void sameLightPerLine(){
 	}
-//	3. Verify the traffic lights along crisscrossing roads in the same junction are either green and red or amber and red.
-	@Test 
-	public void differentLightsIntersection(){
-		Light light = new Light(1,1);
-		byte Hphase = light.getHorizontalPhase();
-		byte Vphase = light.getVerticalPhase();
-		
-		boolean redSame = false;
-		
-		if(Hphase == 0 && Vphase == 0){
-			redSame = true;
-		}
-		else{
-			System.out.println("Test case 3: One Light must be red");
-		}
-		
-		assertTrue(redSame == true || Hphase != Vphase);
-	}
+
 //	4. Verify that no car moves through a red light.
 	@Test
 	public void redLightRule(){
