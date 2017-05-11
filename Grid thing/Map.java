@@ -250,53 +250,60 @@ public class Map
 			}
 		}
 	}
-	
-	public static void carSpawn(Map map, Gui gui)
+	public void carSpawn()
 	{
-		int entrances = (map.getIntersectionColumns() + map.getIntersectionRows()) * 2 - 1; //-1 added as random.nextInt() has an inclusive range (adds 1)
+		int entrances = (intersectionColumns + intersectionRows) * 2 - 1; //-1 added as random.nextInt() has an inclusive range (adds 1)
 		Random rng = new Random();
-		int columns = map.getColumns();
-		int rows = map.getRows();
-		int a;
-		int b;
+		int columns = this.columns;
+		int rows = this.rows;
+		byte direction;
+		int startPoint;
+		int southEntrances = intersectionColumns;
+		int westEntrances = intersectionColumns + intersectionRows;
+		int northEntrances = (2 * intersectionColumns) + intersectionRows;
+		int eastEntrances = entrances;
 		
 		while(true)
 		{
 			try
 			{
-				a = rng.nextInt(entrances);
-				b = -1;
-				
-				while(b!=a)
+				startPoint = rng.nextInt(entrances);
+
+				if (startPoint <= southEntrances)
 				{
-					//left
-					for(int i=0; i<1; i++)
-					{
-						for(int j=5; j>=rows; j+=12)
-						{
-							b++;
-							if(a==b)
-							{
-								if(map.getGrid()[i][j].getIsOccupied() == false)
-								{
-									map.addCar(i, j, (byte) 1, (byte) 0);
-									//draw car
-									break;
-								}
-								//spawn car here heading east
-								//break
-							}
-						}
-					}
-					
-					
+					direction = 0; //car will be heading north on this road
+					startPoint = (12 *southEntrances) + 5;
+					System.out.println("Car spawning at south entrance: " + startPoint);
+					addCar(startPoint, rows, direction, (byte) 2);
 				}
-				
-				
+				else if (startPoint <= westEntrances)
+				{
+					direction = 1; //car will be heading east on this road
+					startPoint -= southEntrances;
+					startPoint = (12 *(startPoint)) + 5;
+					System.out.println("Car spawning at west entrance: " + startPoint);
+					addCar(0, startPoint, direction, (byte) 2);
+				}
+				else if (startPoint <= northEntrances)
+				{
+					direction = 2; //car will be heading south on this road
+					startPoint -= westEntrances;
+					startPoint = (12 *(startPoint)) + 6; //6 cause its driving on the other side of the road
+					System.out.println("Car spawning at north entrance: " + startPoint);
+					addCar(startPoint, 0, direction, (byte) 2);
+				}
+				else if (startPoint <=eastEntrances)
+				{
+					direction = 3; //car will be heading west on this road
+					startPoint -= northEntrances;
+					startPoint = (12 *(startPoint)) + 6; //6 cause its driving on the other side of the road
+					System.out.println("Car spawning at east entrance: " + startPoint);
+					addCar(columns, startPoint, direction, (byte) 2);
+				}
 			}
 			catch(Exception e)
 			{
-				System.out.println("Car Spawn Error");
+				System.out.println("Car Spawn Error: road is probably full at this entrance");
 			}
 		}
 		
