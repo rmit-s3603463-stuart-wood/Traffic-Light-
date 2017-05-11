@@ -83,8 +83,35 @@ public class Main
 		Gui test = new Gui(map.getColumns(), map.getRows(), map);
 		
 		//test.testTiles();
-		
-		lightCycle(greenLightTime, map, test);
+		boolean lastGreenLightHorizontal = true;
+	 	int timeTaken = 0;
+	 	final int AMBER_LIGHT_TIME = 2;
+		do
+		{
+			/*if (timeTaken%carFrequency == 0)
+			{
+				carSpawn(map, test);
+			}*/
+			if (timeTaken%(lightFrequency-AMBER_LIGHT_TIME) == 0)
+			{
+				map.greenToAmber();
+			}
+			if (timeTaken%lightFrequency == 0)
+			{
+				lastGreenLightHorizontal = map.lightSwitch(lastGreenLightHorizontal);
+			}
+			//car.move();
+			//test.update(car, map);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			timeTaken ++;
+			System.out.println(timeTaken + " seconds.");
+			//when first car is deleted, save timeTaken and print at end with statistics
+		}
+		while(true); //while user does not cancel simulation
 		
 	}
 	
