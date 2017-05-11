@@ -180,4 +180,74 @@ public class Map
 		this.cars.remove(temp);
 		this.cars.trimToSize();
 	}
+		public boolean lightSwitch(boolean lastGreenLightHorizontal)
+	{
+		//cycle through tiles until a light is reached
+		for(int i=0; i<columns; i++)
+		{
+			for(int j=0; j<rows; j++)
+			{
+				//if this light is amber-red (1,0) or red-amber (0,1), switch to red-red (0,0)
+				//if this light is red-red (0,0), switch to red-green (0,2), or green-red (2,0) as appropriate
+				if (this.grid[i][j] instanceof Light)
+				{
+					Light light = (Light) this.grid[i][j];
+					if (light.getHorizontalPhase() == (byte) 1 && light.getVerticalPhase() == (byte) 0)
+					{
+						light.setPhase((byte) 0, (byte) 0);
+						System.out.println("Light: [" + i + "][" + j + "]: Phase: " + light.getHorizontalPhase() + ", " + light.getVerticalPhase());
+						return true;
+					} 
+					else if (light.getHorizontalPhase() == (byte) 0 && light.getVerticalPhase() == (byte) 1)
+					{
+						light.setPhase((byte) 0, (byte) 0);
+						System.out.println("Light: [" + i + "][" + j + "]: Phase: " + light.getHorizontalPhase() + ", " + light.getVerticalPhase());
+						return false;
+					}
+					else if (light.getHorizontalPhase() == (byte) 0 && light.getVerticalPhase() == (byte) 0)
+					{
+						if (lastGreenLightHorizontal)
+						{
+							light.setPhase((byte) 0, (byte) 2);
+							System.out.println("Light: [" + i + "][" + j + "]: Phase: " + light.getHorizontalPhase() + ", " + light.getVerticalPhase());
+							return false;
+						}
+						else
+						{
+							light.setPhase((byte) 2, (byte) 0);
+							System.out.println("Light: [" + i + "][" + j + "]: Phase: " + light.getHorizontalPhase() + ", " + light.getVerticalPhase());
+							return true;
+						}
+						
+					}
+				}
+			}
+		}
+		return lastGreenLightHorizontal;
+	}
+	
+	//switch green lights to amber lights
+	public void greenToAmber()
+	{
+		for (int i = 0; i < columns; i++)
+		{
+			for (int j = 0; j < rows; j++)
+			{
+				if (grid[i][j] instanceof Light)
+				{
+					Light light = (Light) grid[i][j];
+					if (light.getHorizontalPhase() == (byte) 2)
+					{
+						light.setPhase((byte) 1, (byte) 0); 
+						System.out.println("Light: [" + i + "][" + j + "]: Phase: " + light.getHorizontalPhase() + ", " + light.getVerticalPhase());
+					}
+					else if (light.getVerticalPhase() == (byte) 2)
+					{
+						light.setPhase((byte) 0, (byte) 1);
+						System.out.println("Light: [" + i + "][" + j + "]: Phase: " + light.getHorizontalPhase() + ", " + light.getVerticalPhase());
+					}
+				}
+			}
+		}
+	}
 }
