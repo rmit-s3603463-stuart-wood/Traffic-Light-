@@ -86,22 +86,47 @@ public class Main
 		boolean lastGreenLightHorizontal = true;
 	 	int timeTaken = 0;
 	 	final int AMBER_LIGHT_TIME = 2;
+		//timeTaken%frequency: every (frequency) seconds, call this method
 		do
 		{
-			/*if (timeTaken%carFrequency == 0)
+			//spawn car every carFrequency seconds
+			if (timeTaken%carFrequency == 0)
 			{
-				carSpawn(map, test);
-			}*/
-			if (timeTaken%(lightFrequency-AMBER_LIGHT_TIME) == 0)
+				map.carSpawn();
+			}
+			//change lights to amber every "greenlighttime - amberlighttime" seconds
+			if ((timeTaken+AMBER_LIGHT_TIME)%lightFrequency == 0)
 			{
 				map.greenToAmber();
+				test.updateLights(map);
 			}
+			//change lights from green cycle to red cycle and vice versa
 			if (timeTaken%lightFrequency == 0)
 			{
 				lastGreenLightHorizontal = map.lightSwitch(lastGreenLightHorizontal);
+				test.updateLights(map);
 			}
-			//car.move();
-			//test.update(car, map);
+			//move cars
+			try
+			{
+				for (int i = 0; i < map.getCars().size(); i++)
+				{
+					if (map.getCars().get(i).move(map))
+					{
+						System.out.println("Car " + i + " moved.");
+					}
+					else
+					{
+						System.out.println("Car " + i + " has left road.");
+						map.deleteCars();
+					}
+				}
+
+			} catch (IndexOutOfBoundsException e)
+			{
+				System.out.println(e);
+			}
+			//make one second pass
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
