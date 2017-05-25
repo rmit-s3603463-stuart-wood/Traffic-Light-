@@ -1,10 +1,9 @@
-/*import javax.swing.JFrame;
-import javax.swing.JButton;
-import java.awt.GridLayout;
-import java.awt.Color;
-import java.awt.Container;*/
+package traffic;
+
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 public class Gui// extends JFrame
 {
@@ -16,6 +15,13 @@ public class Gui// extends JFrame
 		this.rows = rows;
 		
 		this.f = new JFrame();
+		try {
+	        UIManager.setLookAndFeel( UIManager.getCrossPlatformLookAndFeelClassName() );
+		} 
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 		JButton[][] squares = new JButton[columns][rows];
 		for(int i=0; i<columns; i++)
@@ -54,7 +60,7 @@ public class Gui// extends JFrame
 	private int rows;
 	private int columns;
 	private JButton[][] squares;
-	
+
 	public void testTiles()
 	{
 		for(int j=0; j<this.rows; j++)
@@ -82,294 +88,140 @@ public class Gui// extends JFrame
 		{	
 			squares[i][j] = new JButton("");
 			squares[i][j].setBackground(Color.GREEN);
+			squares[i][j].setOpaque(true);
 			
 		}
 		else if(c == 'r')
 		{
 			squares[i][j] = new JButton("");
 			squares[i][j].setBackground(new Color(102, 102, 102));
+			squares[i][j].setOpaque(true);
+			
 		}
 		else
 		{
-			squares[i][j] = new JButton("", getLightImage(i, j, map));
+			squares[i][j] = new JButton("", getLightImage());
+			squares[i][j].setOpaque(true);
 		}
 	}
 	
-	/*
-	public void test2()
-	{
-		Icon ic = new ImageIcon("resources/lights/20.png");
-		this.squares[5][5].setIcon(ic);
-		//this.f.setVisible(false);
-		//this.f.setVisible(true);
-		System.out.println("BLAH!");
-		
-		// crap
-		//JButton lel = new JButton("toplel");
-		//this.f.add(lel);
-		//JButton top = new JButton("top");
-		//this.f.add(top);
-		//this.f.setVisible(false);
-		//this.f.setVisible(true);
-		
-	}
-	*/
-	
 	//public void update(int x, int y, byte direction, byte colour, Map map)
-	public void update(Car car, Map map)
+	public void updateCars(Map map)
 	{
-		int x = car.getX();
-		int y = car.getY();
-		int temp = (int) car.getDirection();
-		byte colour = car.getColour();
-		
-		char previousTile;
+		for (int i = 0; i < map.getCars().size(); i++)
+		{
+			;
+			int x = map.getCars().get(i).getX();
+			int y = map.getCars().get(i).getY();
+			int direction = (int) map.getCars().get(i).getDirection();
+			byte colour = map.getCars().get(i).getColour();
+			char previousTile;
+			int prevX = -1;
+			int prevY = -1;
+			Image carImage = null;
 		
 		/*At the previous tile:
 		 *if it is a light, change image to that of the light
 		 *otherwise, just remove the car image
 		 */
-		switch(temp)
-		{
-			case 0:
-				previousTile = map.getTileType(x, y+1);
-				if(previousTile == 'l')
-				{
-					this.squares[x][y+1] = new JButton("", getLightImage(x, y+1, map));
-				}
-				else
-				{
-					this.squares[x][y+1] = new JButton("");
-				}
-				break;
-			case 1:
-				previousTile = map.getTileType(x-1, y);
-				if(previousTile == 'l')
-				{
-					this.squares[x-1][y] = new JButton("", getLightImage(x+1, y, map));
-				}
-				else
-				{
-					this.squares[x][y+1] = new JButton("");
-				}
-				break;
-			case 2:
-				previousTile = map.getTileType(x, y-1);
-				if(previousTile == 'l')
-				{
-					this.squares[x][y-1] = new JButton("", getLightImage(x, y-1, map));
-				}
-				else
-				{
-					this.squares[x][y+1] = new JButton("");
-				}
-				break;
-			case 3:
-				previousTile = map.getTileType(x+1, y);
-				if(previousTile == 'l')
-				{
-					this.squares[x+1][y] = new JButton("", getLightImage(x+1, y, map));
-				}
-				else
-				{
-					this.squares[x+1][y] = new JButton("");
-				}
-				break;
-			default:
-				break;	
+			switch(direction)
+			{
+				case 0:
+					prevX = x;
+					prevY = y+1;
+					break;
+				case 1:
+					prevX = x+1;
+					prevY = y;
+					break;
+				case 2:
+					prevX = x;
+					prevY = y-1;
+					break;
+				case 3:
+					prevX = x-1;
+					prevY = y;
+					break;
+				default:
+					break;	
+			}
+			
+			previousTile = map.getTileType(prevX, prevY);
+			
+			if (previousTile == 'l')
+			{
+				this.squares[prevX][prevY].setIcon(getLightImage());
+			}
+			else
+			{
+				this.squares[prevX][prevY].setIcon(null);
+			}
+			
+			try {
+				carImage = ImageIO.read(getClass().getResource("resources/lights/car.png"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			Icon iconCar = new ImageIcon(carImage);
+			this.squares[x][y].setIcon(iconCar);
 		}
-		
-		Icon iconCar = new ImageIcon("resources/car.png");
-		this.squares[x][y] = new JButton("", iconCar);
 	}
 	
-	public void update(int x, int y, Light light)
+	public void updateLights(Map map)
 	{
-		byte horizontalPhase = light.getHorizontalPhase();
-		byte verticalPhase = light.getVerticalPhase();
-		String lightCombination = (horizontalPhase + "" + verticalPhase);
-		getLightImage(lightCombination);
 		
-		Icon ic = getLightImage(lightCombination);
-		this.squares[x][y].setIcon(ic);
-		//this.squares[x][y] = null;
-		//this.squares[x][y] = new JButton("", getLightImage(lightCombination));
+		Icon ic = getLightImage();
+		
+		for (int i = 0; i < columns; i++)
+		{
+			for (int j = 0; j < rows; j++)
+			{
+				if (map.getTileType(i,j) == 'l')
+				{
+					squares[i][j].setIcon(ic);
+				}
+			}
+		}
 	}
 	
-	public Icon getLightImage(String lightCombination)
-	{
-		Icon img = null;
-		if (lightCombination.equals("00"))
-		{
-			img = new ImageIcon("resources/lights/00.png");
-		}
-		else if(lightCombination.equals("01"))
-		{
-			img = new ImageIcon("resources/lights/01.png");
-		}
-		else if(lightCombination.equals("02"))
-		{
-			img = new ImageIcon("resources/lights/02.png");
-		}
-		else if(lightCombination.equals("10"))
-		{
-			img = new ImageIcon("resources/lights/10.png");
-		}
-		else if(lightCombination.equals("20"))
-		{
-			img = new ImageIcon("resources/lights/20.png");
-		}
-		
-		return img;
-	}
-	
-	public Icon getLightImage(int x, int y, Map map)
+	public Icon getLightImage()
 	{	
-		Light light = (Light) map.getTile(x, y);
-		byte horizontalPhase = light.getHorizontalPhase();
-		byte verticalPhase = light.getVerticalPhase();
+		int horizontalPhase = (int) Light.getHorizontalPhase();
+		int verticalPhase = (int)Light.getVerticalPhase();
 		String temp = (horizontalPhase + "" + verticalPhase);
-		
+		String filename = null;
+		Image file = null;
 		Icon img = null;
+		
 		if(temp.equals("00"))
 		{
-			img = new ImageIcon("resources/lights/00.png");
+			filename = "resources/lights/00.png";
 		}
 		else if(temp.equals("01"))
 		{
-			img = new ImageIcon("resources/lights/01.png");
+			filename = "resources/lights/01.png";
 		}
 		else if(temp.equals("02"))
 		{
-			img = new ImageIcon("resources/lights/02.png");
+			filename = "resources/lights/02.png";
 		}
 		else if(temp.equals("10"))
 		{
-			img = new ImageIcon("resources/lights/10.png");
+			filename = "resources/lights/10.png";
 		}
 		else if(temp.equals("20"))
 		{
-			img = new ImageIcon("resources/lights/20.png");
+			filename = "resources/lights/20.png";
 		}
+		
+		try {
+			file = ImageIO.read(getClass().getResource(filename));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		img = new ImageIcon(file);
 		
 		return img;
 	}
-	
-	/*
-	public Gui()
-	{
-		f = new JFrame();
-		
-		JButton b1 = new JButton("1");
-		b1.setBackground(Color.BLACK);
-		JButton b2 = new JButton("2");
-		JButton b3 = new JButton("3");
-		JButton b4 = new JButton("4");
-		
-		f.add(b1);
-		f.add(b2);
-		f.add(b3);
-		f.add(b4);
-		
-		f.setLayout(new GridLayout(2, 2));
-		
-		f.setSize(800, 600);
-		f.setVisible(true);
-		f.setResizable(true);
-		
-	}
-	*/
-	
-	/*
-	private Container contents;
-	
-	//private JButton[][] squares;
-	
-	public Gui(int columns, int rows, Map map)
-	{
-		super("Traffic Simulator");
-		setSize(800, 600);
-		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setVisible(true);
-		
-		this.contents = getContentPane();
-		this.contents.setLayout(new GridLayout(rows, columns));
-		
-		JButton[][] squares = new JButton[columns][rows];
-		for(int i=0; i<columns; i++)
-		{
-			for(int j=0; j<rows; j++)
-			{
-				squares[j][i] = new JButton();
-			}
-		}
-		
-		for(int i=0; i<columns; i++)
-		{
-			for(int j=0; i<rows; j++)
-			{
-				System.out.println(map.getTileType(i, j));
-				
-				char c = map.getTileType(i, j);
-				
-				if(c == 'b')
-				{
-					squares[j][i].setBackground(Color.GREEN);
-				}
-				else if(c == 'r')
-				{
-					squares[j][i].setBackground(Color.LIGHT_GRAY);
-				}
-				else if(c == 'l')
-				{
-					squares[j][i].setBackground(Color.YELLOW);
-				}
-				this.contents.add(squares[j][i]);
-			}
-		}
-	}
-	*/
-	
-	/*
-	public Gui(int rows, int columns, Map map)
-	{
-		super("Traffic Simulator");
-		setSize(1024, 768);
-		setResizable(false);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		
-		this.squares = new JButton[columns][rows];
-		
-		setLayout(new GridLayout(rows, columns));
-		
-		for(int i=0; i<columns; i++)
-		{
-			for(int j=0; i<rows; j++)
-			{
-				char c = map.getTileType(i, j);
-				
-				if(c == 'b')
-				{
-					this.squares[i][j].setBackground(Color.GREEN);
-				}
-				else if(c == 'r')
-				{
-					this.squares[i][j].setBackground(Color.LIGHT_GRAY);
-				}
-				else if(c == 'l')
-				{
-					this.squares[i][j].setBackground(Color.YELLOW);
-				}
-				//Gui.add
-			}
-		}
-		
-		//JButton startButton = new JButton("Start");
-		//add(startButton);
-	}
-	private Container contents;
-	
-	private JButton[][] squares;
-	*/
 }
