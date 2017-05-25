@@ -43,33 +43,74 @@ public class Car
 		return this.colour;
 	}
 	
-	public void move(Tile[][] grid, Map map, Gui gui) throws NullPointerException
+	public boolean move(Map map)
 	{
-		switch (this.direction)
+		int nextX = 0;
+		int nextY = 0;
+		switch (direction)
 		{
-			case 0: this.y--;
-					grid[this.x][this.y + 1].setIsOccupied(false);
-					break;
-			case 1: this.x++;
-					grid[this.x - 1][this.y].setIsOccupied(false);
-					break;
-			case 2: this.y++;
-					grid[this.x][this.y - 1].setIsOccupied(false);
-					break;
-			case 3: this.x--;
-					grid[this.x + 1][this.y].setIsOccupied(false);
-					break;
-			default: break;
-		}
-		try 
-		{
-			grid[this.x][this.y].setIsOccupied(true);
-		}
-		catch (NullPointerException e)
-		{
-			System.out.println("Car has left road.\n");
+		//north: to head up, y = y-1
+		case 0:
+			nextX = x;
+			nextY = y - 1;
+			break;
+		//east: to head right, x =x+1
+		case 1:
+			nextX = x + 1;
+			nextY = y;
+			break;
+		//south: to head down, y = y+1
+		case 2:
+			nextX = x;
+			nextY = y + 1;
+			break;
+		//west: to head left, x = x-1
+		case 3:
+			nextX = x - 1;
+			nextY = y;
+			break;
+		default: 
+			break;
 		}
 		
-		gui.update(this, map);
+		if (nextX < 0 || nextX >= map.getColumns() || nextY < 0 || nextY >= map.getRows())
+		{
+			return false;
+		}
+		
+		if (map.getGrid()[nextX][nextY].getIsOccupied() == false)
+		{
+			if (map.getTileType(nextX, nextY) == 'l')
+			{
+				if (direction == 0 || direction == 2)
+				{
+					if (Light.getHorizontalPhase() == (byte) 2 || Light.getHorizontalPhase() == (byte) 1)
+					{
+						map.getGrid()[x][y].setIsOccupied(false);
+						x = nextX;
+						y = nextY;
+						map.getGrid()[x][y].setIsOccupied(true);
+					}
+				}
+				else
+				{
+					if (Light.getVerticalPhase() == (byte) 2 || Light.getVerticalPhase() == (byte) 1)
+					{
+						map.getGrid()[x][y].setIsOccupied(false);
+						x = nextX;
+						y = nextY;
+						map.getGrid()[x][y].setIsOccupied(true);
+					}
+				}
+			}
+			else
+			{
+				map.getGrid()[x][y].setIsOccupied(false);
+				x = nextX;
+				y = nextY;
+				map.getGrid()[x][y].setIsOccupied(true);
+			}
+		}
+		return true;
 	}
 }
