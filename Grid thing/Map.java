@@ -174,11 +174,16 @@ public class Map
 		this.cars.add(new Car(x, y, direction, colour));
 	}
 	
-	public void deleteCar(Car c)
+	public void deleteCars()
 	{
-		int temp = this.cars.indexOf(c);
-		this.cars.remove(temp);
-		this.cars.trimToSize();
+		for (int i = 0; i < cars.size(); i++)
+		{
+			if (cars.get(i).getX() < 0 || cars.get(i).getX() >= columns || cars.get(i).getY() < 0 || cars.get(i).getY() >= rows)
+			{
+				cars.remove(i);
+				i = 0;
+			}
+		}
 	}
 		public boolean lightSwitch(boolean lastGreenLightHorizontal)
 	{
@@ -252,60 +257,78 @@ public class Map
 	}
 	public void carSpawn()
 	{
-		int entrances = (intersectionColumns + intersectionRows) * 2 - 1; //-1 added as random.nextInt() has an inclusive range (adds 1)
-		Random rng = new Random();
+		//seed the random number generator with another random number
+		Random seed = new Random();
+		int entrances = (intersectionColumns + intersectionRows) * 2;
+		Random rng = new Random(seed.nextLong());
 		int columns = this.columns;
 		int rows = this.rows;
-		byte direction;
-		int startPoint;
+		
+		byte direction = -1;
+		int startPoint, startX = -1, startY = -1;
 		int southEntrances = intersectionColumns;
 		int westEntrances = intersectionColumns + intersectionRows;
 		int northEntrances = (2 * intersectionColumns) + intersectionRows;
 		int eastEntrances = entrances;
 		
-		while(true)
-		{
+		
 			try
 			{
 				startPoint = rng.nextInt(entrances);
 
-				if (startPoint <= southEntrances)
+				if (startPoint < southEntrances)
 				{
 					direction = 0; //car will be heading north on this road
-					startPoint = (12 *southEntrances) + 5;
 					System.out.println("Car spawning at south entrance: " + startPoint);
-					addCar(startPoint, rows, direction, (byte) 2);
+					startPoint = (12 *(startPoint)) + 5;
+					startX = startPoint;
+					startY = rows - 1;
 				}
-				else if (startPoint <= westEntrances)
+				else if (startPoint < westEntrances)
 				{
 					direction = 1; //car will be heading east on this road
 					startPoint -= southEntrances;
-					startPoint = (12 *(startPoint)) + 5;
 					System.out.println("Car spawning at west entrance: " + startPoint);
-					addCar(0, startPoint, direction, (byte) 2);
+					startPoint = (12 *(startPoint)) + 5;
+					startX = 0;
+					startY = startPoint;
 				}
-				else if (startPoint <= northEntrances)
+				else if (startPoint < northEntrances)
 				{
 					direction = 2; //car will be heading south on this road
 					startPoint -= westEntrances;
-					startPoint = (12 *(startPoint)) + 6; //6 cause its driving on the other side of the road
 					System.out.println("Car spawning at north entrance: " + startPoint);
-					addCar(startPoint, 0, direction, (byte) 2);
+					startPoint = (12 *(startPoint)) + 6; //6 cause its driving on the other side of the road
+					startX = startPoint;
+					startY = 0;
 				}
-				else if (startPoint <=eastEntrances)
+				else if (startPoint <= eastEntrances)
 				{
 					direction = 3; //car will be heading west on this road
 					startPoint -= northEntrances;
-					startPoint = (12 *(startPoint)) + 6; //6 cause its driving on the other side of the road
 					System.out.println("Car spawning at east entrance: " + startPoint);
-					addCar(columns, startPoint, direction, (byte) 2);
+					startPoint = (12 *(startPoint)) + 6; //6 cause its driving on the other side of the road
+					startX = columns - 1;
+					startY = startPoint;
 				}
+				
+				if (grid[startX][startY].getIsOccupied() == false)
+				{
+					addCar(startX,startY,direction,(byte)2);
+					grid[startX][startY].setIsOccupied(true);
+				}
+				else
+				{
+					System.out.println("Car Spawn Error: road is probably full at this entrance");
+					System.out.println("Entrance: [" + startX + "][" + startY + "]");
+				}
+				
 			}
 			catch(Exception e)
 			{
-				System.out.println("Car Spawn Error: road is probably full at this entrance");
+				System.out.println(e);
+				System.out.println("Dimensions: " + columns + ", " + rows);
+				System.out.println("Start point: " +startX + ", " + startY);
 			}
-		}
-		
 	}
 }
