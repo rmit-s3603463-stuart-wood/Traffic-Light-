@@ -1,6 +1,7 @@
+package traffic;
+
 import java.util.Scanner;
 import java.util.InputMismatchException;
-import java.util.Random;
 
 
 public class Main
@@ -12,8 +13,8 @@ public class Main
 		
 		int intersectionColumns = 0;
 		int intersectionRows = 0;
-		int frequency = 0;
-		int greenLightTime = 0;
+		int carFrequency = 0;
+		int lightFrequency = 0;
 		
 		while(!(intersectionColumns >= 1 && intersectionColumns <= 10))
 		{
@@ -58,14 +59,14 @@ public class Main
 			}
 		}
 		
-		while(greenLightTime < 1)
+		while(lightFrequency < 3) //minimum three as amber lights take 2 seconds: must have minimum 1 second of green lights
 		{
-			System.out.print("\nEnter the duration for green lights:");
+			System.out.print("\nEnter the duration for green lights in seconds (> 3 seconds):");
 			try
 			{
-				greenLightTime = keyboard.nextInt();
+				lightFrequency = keyboard.nextInt();
 				
-				if(greenLightTime < 1)
+				if(lightFrequency < 1)
 				{
 					System.out.println("Duration must be 1 second or greater");
 				}
@@ -77,16 +78,35 @@ public class Main
 			}
 		}
 		
+		while (carFrequency < 1)
+		{
+			System.out.print("\nEnter the frequency of car appearances: ");
+			try
+			{
+				carFrequency = keyboard.nextInt();
+				
+				if (carFrequency < 1)
+				{
+					System.out.println("Cars cannot spawn more than once per second.");
+				}
+			}
+			catch (InputMismatchException e)
+			{
+				System.out.println("Invalid input - enter an input greater than 0.");
+				keyboard.next();
+			}
+		}
+		
 		Map map = new Map(intersectionColumns, intersectionRows);
 		map.print();
 		
 		Gui test = new Gui(map.getColumns(), map.getRows(), map);
-		
-		//test.testTiles();
+		keyboard.close();
 		boolean lastGreenLightHorizontal = true;
-	 	int timeTaken = 0;
+	 	int timeTaken = 1;
 	 	final int AMBER_LIGHT_TIME = 2;
-		//timeTaken%frequency: every (frequency) seconds, call this method
+	 	
+	 	//timeTaken%frequency: every (frequency) seconds, call this method
 		do
 		{
 			//spawn car every carFrequency seconds
@@ -121,10 +141,11 @@ public class Main
 						map.deleteCars();
 					}
 				}
+				//test.updateCars(map);
 
 			} catch (IndexOutOfBoundsException e)
 			{
-				System.out.println(e);
+				e.printStackTrace();
 			}
 			//make one second pass
 			try {
@@ -137,208 +158,5 @@ public class Main
 			//when first car is deleted, save timeTaken and print at end with statistics
 		}
 		while(true); //while user does not cancel simulation
-		
-	}
-	
-	/*
-	public static void carSpawn(Map map, Gui gui)
-	{
-		int entrances = (map.getIntersectionColumns() + map.getIntersectionRows()) * 2;
-		Random rng = new Random();
-		int columns = map.getColumns();
-		int rows = map.getRows();
-		int a;
-		int b;
-		
-		while(true)
-		{
-			try
-			{
-				a = rng.nextInt(entrances);
-				b = -1;
-				
-				while(b!=a)
-				{
-					//left
-					for(int i=0; i<1; i++)
-					{
-						for(int j=5; j>=rows; j+=12)
-						{
-							b++;
-							if(a==b)
-							{
-								if(map.getGrid()[i][j].getIsOccupied() == false)
-								{
-									map.addCar(i, j, (byte) 1, (byte) 0);
-									//draw car
-									break;
-								}
-								//spawn car here heading east
-								//break
-							}
-						}
-					}
-					
-					
-				}
-				
-				
-			}
-			catch(Exception e)
-			{
-				System.out.println("Car Spawn Error");
-			}
-		}
-		
-	}
-	*/
-
-	public static void lightCycle(int greenLightTime, Map map, Gui test)
-	{
-		int rows = map.getRows();
-		int columns = map.getColumns();
-		
-		while(true)
-		{
-			//green, red
-			for(int i=0; i<columns; i++)
-			{
-				for(int j=0; j<rows; j++)
-				{
-					if (map.getGrid()[i][j] instanceof Light)
-					{
-						System.out.println("GREEN-RED " + i +", " + j);
-						
-						Light light = (Light) map.getGrid()[i][j];
-						light.setPhase((byte) 2,(byte) 0);
-						test.update(i, j, light);
-					}
-				}
-			}
-			try
-			{
-				Thread.sleep(greenLightTime * 1000);
-			}
-			catch(Exception e)
-			{
-				System.out.println("Exception");
-			}
-			//amber, red
-			for(int i=0; i<columns; i++)
-			{
-				for(int j=0; j<rows; j++)
-				{
-					if (map.getGrid()[i][j] instanceof Light)
-					{
-						System.out.println("AMBER-RED " + i +", " + j);
-						
-						Light light = (Light) map.getGrid()[i][j];
-						light.setPhase((byte) 1,(byte) 0);
-						test.update(i, j, light);
-					}
-				}
-			}
-			try
-			{
-				Thread.sleep(5000);
-			}
-			catch(Exception e)
-			{
-				System.out.println("Exception");
-			}
-			//red, red
-			for(int i=0; i<columns; i++)
-			{
-				for(int j=0; j<rows; j++)
-				{
-					if (map.getGrid()[i][j] instanceof Light)
-					{
-						System.out.println("RED-RED " + i +", " + j);
-						
-						Light light = (Light) map.getGrid()[i][j];
-						light.setPhase((byte) 0,(byte) 0);
-						test.update(i, j, light);
-					}
-				}
-			}
-			try
-			{
-				Thread.sleep(5000);
-			}
-			catch(Exception e)
-			{
-				System.out.println("Exception");
-			}
-			//red, green
-			for(int i=0; i<columns; i++)
-			{
-				for(int j=0; j<rows; j++)
-				{
-					if (map.getGrid()[i][j] instanceof Light)
-					{
-						System.out.println("RED-GREEN " + i +", " + j);
-						
-						Light light = (Light) map.getGrid()[i][j];
-						light.setPhase((byte) 0,(byte) 2);
-						test.update(i, j, light);
-					}
-				}
-			}
-			try
-			{
-				Thread.sleep(greenLightTime * 1000);
-			}
-			catch(Exception e)
-			{
-				System.out.println("Exception");
-			}
-			//red, amber
-			for(int i=0; i<columns; i++)
-			{
-				for(int j=0; j<rows; j++)
-				{
-					if (map.getGrid()[i][j] instanceof Light)
-					{
-						System.out.println("RED-AMBER " + i +", " + j);
-						
-						Light light = (Light) map.getGrid()[i][j];
-						light.setPhase((byte) 0,(byte) 1);
-						test.update(i, j, light);
-					}
-				}
-			}
-			try
-			{
-				Thread.sleep(5000);
-			}
-			catch(Exception e)
-			{
-				System.out.println("Exception");
-			}
-			//red, red
-			for(int i=0; i<columns; i++)
-			{
-				for(int j=0; j<rows; j++)
-				{
-					if (map.getGrid()[i][j] instanceof Light)
-					{
-						System.out.println("RED-RED " + i +", " + j);
-						
-						Light light = (Light) map.getGrid()[i][j];
-						light.setPhase((byte) 0,(byte) 0);
-						test.update(i, j, light);
-					}
-				}
-			}
-			try
-			{
-				Thread.sleep(5000);
-			}
-			catch(Exception e)
-			{
-				System.out.println("Exception");
-			}
-			
-		}
 	}
 }
