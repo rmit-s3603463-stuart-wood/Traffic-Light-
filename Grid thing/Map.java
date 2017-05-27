@@ -1,9 +1,11 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Map
 {
 	public Map(int intersectionColumns, int intersectionRows)
 	{
+		
 		this.cars = new ArrayList<Car>();
 		
 		this.intersectionColumns = intersectionColumns;
@@ -66,7 +68,7 @@ public class Map
 	
 	private int intersectionColumns;
 	private int intersectionRows;
-	
+	int carsDeleted = 0;
 	
 	private int calculateDimensions(int x)
 	{
@@ -181,11 +183,31 @@ public class Map
 			if (cars.get(i).getX() < 0 || cars.get(i).getX() >= columns || cars.get(i).getY() < 0 || cars.get(i).getY() >= rows)
 			{
 				cars.remove(i);
+				this.carsDeleted++;
 				i = 0;
 			}
 		}
 	}
-		public boolean lightSwitch(boolean lastGreenLightHorizontal)
+	
+	public void displayLeftCars(){
+		System.out.println("Number of Cars Passed: " + carsDeleted);
+	}
+	
+	public void forceLightRed(){
+		for(int i=0; i<columns; i++)
+		{
+			for(int j=0; j<rows; j++)
+			{
+				if (this.grid[i][j] instanceof Light){
+					Light light = (Light) this.grid[i][j];
+					light.setPhase((byte) 0, (byte) 0);
+				}
+			}
+			
+		}
+	}
+	
+	public boolean lightSwitch(boolean lastGreenLightHorizontal)
 	{
 		//cycle through tiles until a light is reached
 		for(int i=0; i<columns; i++)
