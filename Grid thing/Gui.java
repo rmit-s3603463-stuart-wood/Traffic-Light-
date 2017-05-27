@@ -1,5 +1,3 @@
-package traffic;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -131,7 +129,7 @@ public class Gui// extends JFrame
 					prevY = y+1;
 					break;
 				case 1:
-					prevX = x+1;
+					prevX = x-1;
 					prevY = y;
 					break;
 				case 2:
@@ -139,7 +137,7 @@ public class Gui// extends JFrame
 					prevY = y-1;
 					break;
 				case 3:
-					prevX = x-1;
+					prevX = x+1;
 					prevY = y;
 					break;
 				default:
