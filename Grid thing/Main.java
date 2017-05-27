@@ -1,16 +1,16 @@
-package traffic;
-
 import java.util.Scanner;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.util.InputMismatchException;
 
 
 public class Main
 {
+	static boolean user_cancel = false;
 
 	public static void main(String[] args) throws InputMismatchException
 	{	
 		Scanner keyboard = new Scanner(System.in);
-		
 		int intersectionColumns = 0;
 		int intersectionRows = 0;
 		int carFrequency = 0;
@@ -38,8 +38,7 @@ public class Main
 		while(!(intersectionRows >= 1 && intersectionRows <= 10) | (intersectionColumns * intersectionRows > 10))
 		{
 			System.out.print("\nEnter the number of rows of intersections:");
-			try
-			{
+			try{
 				intersectionRows = keyboard.nextInt();
 				
 				if(!(intersectionRows >= 1 && intersectionRows <= 10))
@@ -105,7 +104,6 @@ public class Main
 		boolean lastGreenLightHorizontal = true;
 	 	int timeTaken = 1;
 	 	final int AMBER_LIGHT_TIME = 2;
-	 	
 	 	//timeTaken%frequency: every (frequency) seconds, call this method
 		do
 		{
@@ -141,7 +139,7 @@ public class Main
 						map.deleteCars();
 					}
 				}
-				//test.updateCars(map);
+				test.updateCars(map);
 
 			} catch (IndexOutOfBoundsException e)
 			{
@@ -157,6 +155,17 @@ public class Main
 			System.out.println(timeTaken + " seconds.");
 			//when first car is deleted, save timeTaken and print at end with statistics
 		}
-		while(true); //while user does not cancel simulation
+		while(user_cancel != true); //while user does not cancel simulation
+		
+		if(user_cancel == false){
+			System.out.println("Time lapsed: " + timeTaken);
+			map.displayLeftCars();
+		}
 	}
+	
+	public static void IsKeyPressed (KeyEvent e){
+		e.getKeyCode();
+	}
+	
+	
 }
