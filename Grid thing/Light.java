@@ -1,5 +1,3 @@
-package traffic;
-
 public class Light extends Tile
 {
 	public Light(int horizontalPhase, int verticalPhase)
