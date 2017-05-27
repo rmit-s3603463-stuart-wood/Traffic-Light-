@@ -5,7 +5,7 @@ public class Car
 		this.x = x;
 		this.y = y;
 		this.direction = direction;
-		this.colour = colour;
+		this.colour = 0;
 	}
 	
 	private int x;
@@ -16,12 +16,6 @@ public class Car
 	   2 - south
 	   3 - west */
 	private byte colour;
-	/* 0 - red
-	   1 - blue
-	   2 - green
-	   3 - yellow
-	   4 - pink
-	   5 - purple */
 	
 	public int getX()
 	{
