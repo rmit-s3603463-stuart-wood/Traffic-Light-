@@ -85,8 +85,9 @@ public class Gui// extends JFrame
 		if(c == 'b')
 		{	
 			squares[i][j] = new JButton("");
-			squares[i][j].setBackground(Color.GREEN);
+			squares[i][j].setBackground(new Color(0, 153, 51));
 			squares[i][j].setOpaque(true);
+			squares[i][j].setBorderPainted(false);
 			
 		}
 		else if(c == 'r')
@@ -94,75 +95,92 @@ public class Gui// extends JFrame
 			squares[i][j] = new JButton("");
 			squares[i][j].setBackground(new Color(102, 102, 102));
 			squares[i][j].setOpaque(true);
+			squares[i][j].setBorderPainted(false);
 			
 		}
 		else
 		{
 			squares[i][j] = new JButton("", getLightImage());
 			squares[i][j].setOpaque(true);
+			squares[i][j].setBorderPainted(false);
 		}
 	}
 	
-	//public void update(int x, int y, byte direction, byte colour, Map map)
-	public void updateCars(Map map)
+	public void updateCar(int x, int y, int direction, Map map)
 	{
-		for (int i = 0; i < map.getCars().size(); i++)
-		{
-			;
-			int x = map.getCars().get(i).getX();
-			int y = map.getCars().get(i).getY();
-			int direction = (int) map.getCars().get(i).getDirection();
-			byte colour = map.getCars().get(i).getColour();
-			char previousTile;
-			int prevX = -1;
-			int prevY = -1;
-			Image carImage = null;
+		int prevX = -1;
+		int prevY = -1;
+		char prevTile;
+		boolean onFirstTile = false;
+		Image carImage = null;
 		
-		/*At the previous tile:
-		 *if it is a light, change image to that of the light
-		 *otherwise, just remove the car image
-		 */
-			switch(direction)
-			{
-				case 0:
-					prevX = x;
-					prevY = y+1;
-					break;
-				case 1:
-					prevX = x-1;
-					prevY = y;
-					break;
-				case 2:
-					prevX = x;
-					prevY = y-1;
-					break;
-				case 3:
-					prevX = x+1;
-					prevY = y;
-					break;
-				default:
-					break;	
-			}
-			
-			previousTile = map.getTileType(prevX, prevY);
-			
-			if (previousTile == 'l')
-			{
-				this.squares[prevX][prevY].setIcon(getLightImage());
-			}
-			else
-			{
-				this.squares[prevX][prevY].setIcon(null);
-			}
-			
-			try {
-				carImage = ImageIO.read(getClass().getResource("resources/lights/car.png"));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-			Icon iconCar = new ImageIcon(carImage);
-			this.squares[x][y].setIcon(iconCar);
+		switch(direction)
+		{
+			case 0:
+				prevX = x;
+				prevY = y+1;
+				if(y == map.getRows()-1)
+				{
+					onFirstTile = true;
+				}
+				break;
+			case 1:
+				prevX = x-1;
+				prevY = y;
+				if(x == 0)
+				{
+					onFirstTile = true;
+				}
+				break;
+			case 2:
+				prevX = x;
+				prevY = y-1;
+				if(y == 0)
+				{
+					onFirstTile = true;
+				}
+				break;
+			case 3:
+				prevX = x+1;
+				prevY = y;
+				if(x == map.getColumns()-1)
+				{
+					onFirstTile = true;
+				}
+				break;
+			default:
+				break;
 		}
+		
+		
+		if(!onFirstTile)
+		{
+			if(!map.getGrid()[prevX][prevY].getIsOccupied())
+			{
+				/*At the previous tile:
+				 *if it is a light, change image to that of the light
+				 *otherwise, just remove the car image
+				 */
+				prevTile = map.getTileType(prevX, prevY);
+				
+				if (prevTile == 'l')
+				{
+					this.squares[prevX][prevY].setIcon(getLightImage());
+				}
+				else
+				{
+					this.squares[prevX][prevY].setIcon(null);
+				}
+			}
+		}
+		
+		try {
+			carImage = ImageIO.read(getClass().getResource("resources/lights/car.png"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		Icon iconCar = new ImageIcon(carImage);
+		this.squares[x][y].setIcon(iconCar);
 	}
 	
 	public void removeCarIcon(int x, int y)
