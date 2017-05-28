@@ -72,13 +72,24 @@ public class Car
 			return false;
 		}
 		
-		if (map.getGrid()[nextX][nextY].getIsOccupied() == false)
+		if (map.getGrid()[nextX][nextY].getIsOccupied() == false)//if the next tile is empty
 		{
-			if (map.getTileType(nextX, nextY) == 'l')
+			if(map.getTileType(x, y) == 'l')//if the car is on a light tile
+			{
+				/*if the car is on a light tile, and the next tile is empty,
+				 we always want to move to the next tile (even if the light is
+				 amber or red) or else the car gets stuck on the intersection,
+				 blocking other lanes and increasing the chance of gridlock*/
+				map.getGrid()[x][y].setIsOccupied(false);
+				x = nextX;
+				y = nextY;
+				map.getGrid()[x][y].setIsOccupied(true);
+			}
+			else if (map.getTileType(nextX, nextY) == 'l')
 			{
 				if (direction == 0 || direction == 2)
 				{
-					if (Light.getHorizontalPhase() == (byte) 2 || Light.getHorizontalPhase() == (byte) 1)
+					if (Light.getVerticalPhase() == (byte) 2)
 					{
 						map.getGrid()[x][y].setIsOccupied(false);
 						x = nextX;
@@ -88,7 +99,7 @@ public class Car
 				}
 				else
 				{
-					if (Light.getVerticalPhase() == (byte) 2 || Light.getVerticalPhase() == (byte) 1)
+					if (Light.getHorizontalPhase() == (byte) 2)
 					{
 						map.getGrid()[x][y].setIsOccupied(false);
 						x = nextX;
