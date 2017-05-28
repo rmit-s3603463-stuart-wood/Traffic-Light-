@@ -197,20 +197,6 @@ public class Map
 		System.out.println("Number of Cars Passed: " + carsDeleted);
 	}
 	
-	public void forceLightRed(){
-		for(int i=0; i<columns; i++)
-		{
-			for(int j=0; j<rows; j++)
-			{
-				if (this.grid[i][j] instanceof Light){
-					Light light = (Light) this.grid[i][j];
-					light.setPhase((byte) 0, (byte) 0);
-				}
-			}
-			
-		}
-	}
-	
 	public boolean lightSwitch(boolean lastGreenLightHorizontal)
 	{
 		//cycle through tiles until a light is reached
