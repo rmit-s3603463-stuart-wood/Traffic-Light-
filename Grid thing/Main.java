@@ -58,9 +58,9 @@ public class Main
 			}
 		}
 		
-		while(lightFrequency < 3) //minimum three as amber lights take 2 seconds: must have minimum 1 second of green lights
+		while(lightFrequency < 6) //minimum three as amber lights take 2 seconds: must have minimum 1 second of green lights
 		{
-			System.out.print("\nEnter the duration for green lights in seconds (> 3 seconds):");
+			System.out.print("\nEnter the duration for green lights in seconds (> 5 seconds):");
 			try
 			{
 				lightFrequency = keyboard.nextInt();
@@ -102,8 +102,11 @@ public class Main
 		Gui gui = new Gui(map.getColumns(), map.getRows(), map);
 		keyboard.close();
 		boolean lastGreenLightHorizontal = true;
+		boolean lastSwitchToRed = true;
 	 	int timeTaken = 1;
-	 	final int AMBER_LIGHT_TIME = 2;
+	 	final int AMBER_LIGHT_TIME = 5;
+	 	lightFrequency+=AMBER_LIGHT_TIME;
+	 	final int RED_LIGHT_TIME = 3;
 	 	//timeTaken%frequency: every (frequency) seconds, call this method
 		do
 		{
@@ -112,16 +115,23 @@ public class Main
 			{
 				map.carSpawn();
 			}
+			//change lights from green cycle to red cycle and vice versa
+			if((timeTaken-RED_LIGHT_TIME)%lightFrequency == 0 && !lastSwitchToRed)
+			{
+				lastGreenLightHorizontal = map.lightSwitch(lastGreenLightHorizontal);
+				gui.updateLights(map);
+				lastSwitchToRed = true;
+			}
+			if (timeTaken%lightFrequency == 0 && lastSwitchToRed)
+			{
+				lastGreenLightHorizontal = map.lightSwitch(lastGreenLightHorizontal);
+				gui.updateLights(map);
+				lastSwitchToRed = false;
+			}
 			//change lights to amber every "greenlighttime - amberlighttime" seconds
 			if ((timeTaken+AMBER_LIGHT_TIME)%lightFrequency == 0)
 			{
 				map.greenToAmber();
-				gui.updateLights(map);
-			}
-			//change lights from green cycle to red cycle and vice versa
-			if (timeTaken%lightFrequency == 0)
-			{
-				lastGreenLightHorizontal = map.lightSwitch(lastGreenLightHorizontal);
 				gui.updateLights(map);
 			}
 			//move cars
@@ -129,9 +139,9 @@ public class Main
 			{
 				for (int i = 0; i < map.getCars().size(); i++)
 				{
-					if (map.getCars().get(i).move(map))
+					if (map.getCars().get(i).move(map, gui))
 					{
-						System.out.println("Car " + i + " moved.");
+						//System.out.println("Car " + i + " moved.");
 					}
 					else
 					{
@@ -139,7 +149,7 @@ public class Main
 						map.deleteCars(gui);
 					}
 				}
-				gui.updateCars(map);
+				//gui.updateCars(map);
 
 			} catch (IndexOutOfBoundsException e)
 			{
@@ -152,7 +162,7 @@ public class Main
 				e.printStackTrace();
 			}
 			timeTaken ++;
-			System.out.println(timeTaken + " seconds.");
+			//System.out.println(timeTaken + " seconds.");
 			//when first car is deleted, save timeTaken and print at end with statistics
 		}
 		while(user_cancel != true); //while user does not cancel simulation
