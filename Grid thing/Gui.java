@@ -165,6 +165,11 @@ public class Gui// extends JFrame
 		}
 	}
 	
+	public void removeCarIcon(int x, int y)
+	{
+		this.squares[x][y].setIcon(null);
+	}
+	
 	public void updateLights(Map map)
 	{
 		
