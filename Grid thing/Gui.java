@@ -48,35 +48,15 @@ public class Gui// extends JFrame
 		this.f.setSize(800, 800);
 		this.f.setVisible(true);
 		this.f.setResizable(true);
-		this.f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		//this.frame = f;
+		this.f.setTitle("Traffic Light Simulator");
+		//this.f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.f.addWindowListener(new GuiMonitor()); 
 	}
 	
-	//private JFrame frame;
 	private JFrame f;
 	private int rows;
 	private int columns;
 	private JButton[][] squares;
-
-	public void testTiles()
-	{
-		for(int j=0; j<this.rows; j++)
-		{
-			for(int i=0;i<this.columns; i++)
-			{
-				this.squares[i][j].setBackground(Color.RED);
-				try
-				{
-					Thread.sleep(10);
-				}
-				catch(Exception e)
-				{
-					
-				}
-			}
-		}
-	}
 	
 	/*make background at squares[i][j] match type of that of map.grid[i][j]
 	 * shows initial traffic light images*/
@@ -152,7 +132,6 @@ public class Gui// extends JFrame
 				break;
 		}
 		
-		
 		if(!onFirstTile)
 		{
 			if(!map.getGrid()[prevX][prevY].getIsOccupied())
@@ -169,23 +148,27 @@ public class Gui// extends JFrame
 				}
 				else
 				{
-					this.squares[prevX][prevY].setIcon(null);
+					this.squares[prevX][prevY].setBackground(new Color(102, 102, 102));
 				}
 			}
 		}
 		
-		try {
-			carImage = ImageIO.read(getClass().getResource("resources/lights/car.png"));
-		} catch (IOException e) {
-			e.printStackTrace();
+		this.squares[x][y].setBackground(Color.BLUE);
+		char tileType = map.getTileType(x, y);
+		if(tileType == 'l')
+		{
+			this.squares[x][y].setIcon(null);
 		}
-		Icon iconCar = new ImageIcon(carImage);
-		this.squares[x][y].setIcon(iconCar);
+	}
+	
+	public void createCarIcon(int x, int y)
+	{
+		this.squares[x][y].setBackground(Color.BLUE);
 	}
 	
 	public void removeCarIcon(int x, int y)
 	{
-		this.squares[x][y].setIcon(null);
+		this.squares[x][y].setBackground(new Color(102, 102, 102));
 	}
 	
 	public void updateLights(Map map)
