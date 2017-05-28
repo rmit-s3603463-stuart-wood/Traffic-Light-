@@ -15,6 +15,7 @@ public class Main
 		int intersectionRows = 0;
 		int carFrequency = 0;
 		int lightFrequency = 0;
+		int speedMultiplier = -1;
 		
 		while(!(intersectionColumns >= 1 && intersectionColumns <= 10))
 		{
@@ -58,28 +59,28 @@ public class Main
 			}
 		}
 		
-		while(lightFrequency < 6) //minimum three as amber lights take 2 seconds: must have minimum 1 second of green lights
+		while(lightFrequency < 6)
 		{
 			System.out.print("\nEnter the duration for green lights in seconds (> 5 seconds):");
 			try
 			{
 				lightFrequency = keyboard.nextInt();
 				
-				if(lightFrequency < 1)
+				if(lightFrequency < 6)
 				{
-					System.out.println("Duration must be 1 second or greater");
+					System.out.println("Duration must greater than 5 seconds");
 				}
 			}
 			catch(InputMismatchException e)
 			{
-				System.out.println("Invalid input - enter an integer greater than 0");
+				System.out.println("Invalid input - enter an integer greater than 5");
 				keyboard.next();
 			}
 		}
 		
 		while (carFrequency < 1)
 		{
-			System.out.print("\nEnter the frequency of car appearances: ");
+			System.out.print("\nEnter the frequency of car appearances (seconds between each car spawn):");
 			try
 			{
 				carFrequency = keyboard.nextInt();
@@ -91,19 +92,41 @@ public class Main
 			}
 			catch (InputMismatchException e)
 			{
-				System.out.println("Invalid input - enter an input greater than 0.");
+				System.out.println("Invalid input - enter an integer greater than 0.");
 				keyboard.next();
 			}
 		}
 		
+		while(speedMultiplier<1 || speedMultiplier>20)
+		{
+			System.out.println("\nEnter the speed for the simulation to run (minimum x1, maximum x20)");
+			
+			try
+			{
+				System.out.print("Speed: x");
+				speedMultiplier = keyboard.nextInt();
+				
+				if(speedMultiplier<1 || speedMultiplier>20)
+				{
+					System.out.println("Invalid input - enter an integer from 1 to 20");
+				}
+			}
+			catch(InputMismatchException e)
+			{
+				System.out.println("Invalid input: - enter an integer from 1 to 20");
+				keyboard.next();
+			}
+			
+		}
+		
 		Map map = new Map(intersectionColumns, intersectionRows);
-		map.print();
+		//map.print();
 		
 		Gui gui = new Gui(map.getColumns(), map.getRows(), map);
 		keyboard.close();
 		boolean lastGreenLightHorizontal = true;
 		boolean lastSwitchToRed = true;
-	 	int timeTaken = 1;
+	 	timeTaken = 1;
 	 	final int AMBER_LIGHT_TIME = 5;
 	 	lightFrequency+=AMBER_LIGHT_TIME;
 	 	final int RED_LIGHT_TIME = 3;
@@ -113,7 +136,10 @@ public class Main
 			//spawn car every carFrequency seconds
 			if (timeTaken%carFrequency == 0)
 			{
-				map.carSpawn();
+				if(map.carSpawn(gui))
+				{
+					numberOfCars++;
+				}
 			}
 			//change lights from green cycle to red cycle and vice versa
 			if((timeTaken-RED_LIGHT_TIME)%lightFrequency == 0 && !lastSwitchToRed)
@@ -145,7 +171,7 @@ public class Main
 					}
 					else
 					{
-						System.out.println("Car " + i + " has left road.");
+						//System.out.println("Car " + i + " has left road.");
 						map.deleteCars(gui);
 					}
 				}
@@ -157,7 +183,8 @@ public class Main
 			}
 			//make one second pass
 			try {
-				Thread.sleep(1000);
+				timeTaken++;
+				Thread.sleep(1000/speedMultiplier);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -166,16 +193,8 @@ public class Main
 			//when first car is deleted, save timeTaken and print at end with statistics
 		}
 		while(user_cancel != true); //while user does not cancel simulation
-		
-		if(user_cancel == false){
-			System.out.println("Time lapsed: " + timeTaken);
-			map.displayLeftCars();
-		}
 	}
 	
-	public static void IsKeyPressed (KeyEvent e){
-		e.getKeyCode();
-	}
+	public static int timeTaken;
+	public static int numberOfCars;
 	
-	
-}
