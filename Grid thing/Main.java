@@ -99,7 +99,7 @@ public class Main
 		Map map = new Map(intersectionColumns, intersectionRows);
 		map.print();
 		
-		Gui test = new Gui(map.getColumns(), map.getRows(), map);
+		Gui gui = new Gui(map.getColumns(), map.getRows(), map);
 		keyboard.close();
 		boolean lastGreenLightHorizontal = true;
 	 	int timeTaken = 1;
@@ -116,13 +116,13 @@ public class Main
 			if ((timeTaken+AMBER_LIGHT_TIME)%lightFrequency == 0)
 			{
 				map.greenToAmber();
-				test.updateLights(map);
+				gui.updateLights(map);
 			}
 			//change lights from green cycle to red cycle and vice versa
 			if (timeTaken%lightFrequency == 0)
 			{
 				lastGreenLightHorizontal = map.lightSwitch(lastGreenLightHorizontal);
-				test.updateLights(map);
+				gui.updateLights(map);
 			}
 			//move cars
 			try
@@ -136,10 +136,10 @@ public class Main
 					else
 					{
 						System.out.println("Car " + i + " has left road.");
-						map.deleteCars();
+						map.deleteCars(gui);
 					}
 				}
-				test.updateCars(map);
+				gui.updateCars(map);
 
 			} catch (IndexOutOfBoundsException e)
 			{
