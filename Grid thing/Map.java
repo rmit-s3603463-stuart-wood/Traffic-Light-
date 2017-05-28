@@ -176,13 +176,17 @@ public class Map
 		this.cars.add(new Car(x, y, direction, colour));
 	}
 	
-	public void deleteCars()
+	public void deleteCars(Gui gui)
 	{
 		for (int i = 0; i < cars.size(); i++)
 		{
-			if (cars.get(i).getX() < 0 || cars.get(i).getX() >= columns || cars.get(i).getY() < 0 || cars.get(i).getY() >= rows)
+			if (cars.get(i).getX() == 0 || cars.get(i).getX() == columns-1 || cars.get(i).getY() == 0 || cars.get(i).getY() == rows-1)
 			{
+				int x = cars.get(i).getX();
+				int y = cars.get(i).getY();
 				cars.remove(i);
+				this.grid[x][y].setIsOccupied(false);//make the coordinate empty
+				gui.removeCarIcon(x, y); //delete car image
 				this.carsDeleted++;
 				i = 0;
 			}
