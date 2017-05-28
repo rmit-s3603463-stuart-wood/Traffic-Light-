@@ -37,7 +37,7 @@ public class Car
 		return this.colour;
 	}
 	
-	public boolean move(Map map)
+	public boolean move(Map map, Gui gui)
 	{
 		int nextX = 0;
 		int nextY = 0;
@@ -115,6 +115,7 @@ public class Car
 				y = nextY;
 				map.getGrid()[x][y].setIsOccupied(true);
 			}
+			gui.updateCar(x, y, (int) direction, map);
 		}
 		return true;
 	}
